@@ -1,7 +1,14 @@
 package impulsexchangeserver;
 
+import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -12,7 +19,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     public MainFrame() {
         initComponents();
-        exchangePanel.setLayout(new GridLayout(0, 6, 7, 7));
+        exchangePanel.setLayout(new GridLayout(0, 7, 7, 7));
         setLocationRelativeTo(null);
         initPanelComponents();
         this.setSize(this.getWidth(), (26 + 7) * elementsCount + 12 + 65);
@@ -20,13 +27,18 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void initPanelComponents() {
         JLabel[] depNumLabel = new JLabel[elementsCount];
+        JLabel[] spaceLabel = new JLabel[elementsCount];
         JProgressBar[] progressBar = new JProgressBar[elementsCount];
         JButton[] openDirBtn = new JButton[elementsCount];
-        JButton[] infoBtn = new JButton[elementsCount];
+        JButton[] detailsBtn = new JButton[elementsCount];
         JButton[] toExchangeBtn = new JButton[elementsCount];
         JToggleButton[] completeBtn = new JToggleButton[elementsCount];
 
         for (int i = 0; i < elementsCount; i++) {
+            progressBar[i] = new JProgressBar();
+            progressBar[i].setStringPainted(true);
+            exchangePanel.add(progressBar[i]);
+
             depNumLabel[i] = new JLabel("Отдел №" + i);
             exchangePanel.add(depNumLabel[i]);
 
@@ -41,28 +53,44 @@ public class MainFrame extends javax.swing.JFrame {
             completeBtn[i].addActionListener(this::btnsActionPerformed);
             completeBtn[i].setFocusPainted(false);
             exchangePanel.add(completeBtn[i]);
-            
-            progressBar[i] = new JProgressBar();
-            progressBar[i].setStringPainted(true);
-            exchangePanel.add(progressBar[i]);
+
+            spaceLabel[i] = new JLabel("");
+            exchangePanel.add(spaceLabel[i]);
 
             openDirBtn[i] = new JButton("...");
             openDirBtn[i].setActionCommand("openDirBtn_" + i);
-            openDirBtn[i].addActionListener(this::btnsActionPerformed);
+            openDirBtn[i].addActionListener((evt) -> {
+                try {
+                    this.openDirActionPerformed(evt);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
             openDirBtn[i].setFocusPainted(false);
             exchangePanel.add(openDirBtn[i]);
 
-            infoBtn[i] = new JButton("Заказы");
-            infoBtn[i].setActionCommand("infoBtn_" + i);
-            infoBtn[i].addActionListener(this::btnsActionPerformed);
-            infoBtn[i].setFocusPainted(false);
-            exchangePanel.add(infoBtn[i]);
+            detailsBtn[i] = new JButton("Детали");
+            detailsBtn[i].setActionCommand("detailsBtn_" + i);
+            detailsBtn[i].addActionListener(this::detailsBtnActionPerformed);
+            detailsBtn[i].setFocusPainted(false);
+            exchangePanel.add(detailsBtn[i]);
         }
     }
 
     private void btnsActionPerformed(ActionEvent evt) {
         System.out.println("evt = " + evt.paramString());
+    }
 
+    private void openDirActionPerformed(ActionEvent evt) throws IOException {
+        System.out.println("evt = " + evt.paramString());
+        Desktop.getDesktop().open(new File("C:\\windows"));
+    }
+    
+    private void detailsBtnActionPerformed(ActionEvent evt) {
+        System.out.println("evt = " + evt.paramString());
+        DetailsFrame detailsFrame = new DetailsFrame();
+        detailsFrame.setLocationRelativeTo(this);
+        detailsFrame.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -73,7 +101,7 @@ public class MainFrame extends javax.swing.JFrame {
         mainDownloadBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(650, 280));
+        setPreferredSize(new java.awt.Dimension(710, 280));
 
         exchangePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -123,10 +151,10 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
-        System.out.println("size = " + exchangePanel.getSize());
+        System.out.println("framePreferredSize = " + this.getPreferredSize());
+        System.out.println("frameSize = " + this.getSize());
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
-    private JScrollPane scrollPane;
     private static final int elementsCount = 5;
     private GridLayout lay = new GridLayout(0, 5, 20, 20);
     // Variables declaration - do not modify//GEN-BEGIN:variables
