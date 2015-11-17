@@ -6,15 +6,16 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 
 public class MainFrame extends javax.swing.JFrame {
 
     public MainFrame() {
         initComponents();
-        exchangePanel.setLayout(new GridLayout(0, 5, 7, 7));
+        exchangePanel.setLayout(new GridLayout(0, 6, 7, 7));
         setLocationRelativeTo(null);
         initPanelComponents();
-        this.setSize(this.getWidth(), (26+7)*elementsCount + 12 + 65);
+        this.setSize(this.getWidth(), (26 + 7) * elementsCount + 12 + 65);
     }
 
     private void initPanelComponents() {
@@ -23,28 +24,39 @@ public class MainFrame extends javax.swing.JFrame {
         JButton[] openDirBtn = new JButton[elementsCount];
         JButton[] infoBtn = new JButton[elementsCount];
         JButton[] toExchangeBtn = new JButton[elementsCount];
+        JToggleButton[] completeBtn = new JToggleButton[elementsCount];
 
         for (int i = 0; i < elementsCount; i++) {
-            depNumLabel[i] = new JLabel("№" + i);
+            depNumLabel[i] = new JLabel("Отдел №" + i);
             exchangePanel.add(depNumLabel[i]);
 
-            progressBar[i] = new JProgressBar();
-            exchangePanel.add(progressBar[i]);
-
-            openDirBtn[i] = new JButton("Открыть");
-            openDirBtn[i].setActionCommand("openDirBtn_" + i);
-            openDirBtn[i].addActionListener(this::btnsActionPerformed);
-            exchangePanel.add(openDirBtn[i]);
-
-            infoBtn[i] = new JButton("Инфо");
-            infoBtn[i].setActionCommand("infoBtn_" + i);
-            infoBtn[i].addActionListener(this::btnsActionPerformed);
-            exchangePanel.add(infoBtn[i]);
-            
             toExchangeBtn[i] = new JButton("На обмен");
             toExchangeBtn[i].setActionCommand("toExchangeBtn_" + i);
             toExchangeBtn[i].addActionListener(this::btnsActionPerformed);
+            toExchangeBtn[i].setFocusPainted(false);
             exchangePanel.add(toExchangeBtn[i]);
+
+            completeBtn[i] = new JToggleButton("Готово");
+            completeBtn[i].setActionCommand("completeBtn_" + i);
+            completeBtn[i].addActionListener(this::btnsActionPerformed);
+            completeBtn[i].setFocusPainted(false);
+            exchangePanel.add(completeBtn[i]);
+            
+            progressBar[i] = new JProgressBar();
+            progressBar[i].setStringPainted(true);
+            exchangePanel.add(progressBar[i]);
+
+            openDirBtn[i] = new JButton("...");
+            openDirBtn[i].setActionCommand("openDirBtn_" + i);
+            openDirBtn[i].addActionListener(this::btnsActionPerformed);
+            openDirBtn[i].setFocusPainted(false);
+            exchangePanel.add(openDirBtn[i]);
+
+            infoBtn[i] = new JButton("Заказы");
+            infoBtn[i].setActionCommand("infoBtn_" + i);
+            infoBtn[i].addActionListener(this::btnsActionPerformed);
+            infoBtn[i].setFocusPainted(false);
+            exchangePanel.add(infoBtn[i]);
         }
     }
 
