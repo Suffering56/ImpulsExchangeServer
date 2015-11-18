@@ -22,7 +22,6 @@ public class FtpDownload extends Thread {
         this.depNum = depNum;
         swndFullPath = new File("F:\\DealerDataExchange\\" + depNum + "\\swnd5.arc");
     }
-    
 
 //    public FtpDownload(JProgressBar sendProgress, DefaultListModel dm, String depNum) {
 //        this.sendProgress = sendProgress;
@@ -31,12 +30,11 @@ public class FtpDownload extends Thread {
 //        //this.options = options;
 //        //downloadFile = new File(options.getSwndFileFullPath());
 //    }
-
     @Override
     public void run() {
         try {
             downloadFile();
-            
+
 //            uploadInfo();                                                                   //загрузка информации о заказах на сервер
 //
             progressBar.setValue(100);                 //установка значения 100% на прогресс баре
@@ -73,26 +71,21 @@ public class FtpDownload extends Thread {
 //        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
 //                + ":/" + options.getDepartmentNumber() + "/" + options.getSwndFileName());
         URLConnection urlConnection = ur.openConnection();
-
         
-        //BufferedInputStream localFileInputStream = new BufferedInputStream(new FileInputStream(sendFile));
         BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
         BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(swndFullPath));
-        
-        //BufferedOutputStream sendFileOutputStream = new BufferedOutputStream(urlConnection.getOutputStream());
-        
+
         int line;
         int i = 0;
         int progressValue;
         int oldProgressValue = 0;
-        System.out.println("ContentLength[" + depNum + "] = " + urlConnection.getContentLength());
         double onePercent = urlConnection.getContentLength() / 100.0;
-//        
+        
         while ((line = getFileInputStream.read()) != -1) {
             i++;
             progressValue = (int) (i / onePercent);
-
             localFileOutputStream.write(line);
+            
             if ((progressValue != oldProgressValue) && (progressValue != 100)) {
                 Thread.sleep(0);
                 progressBar.setValue(progressValue);
@@ -142,5 +135,5 @@ public class FtpDownload extends Thread {
     private final Options options;
     private final JProgressBar progressBar;
     private final File swndFullPath;
-    private String depNum;
+    private final String depNum;
 }
