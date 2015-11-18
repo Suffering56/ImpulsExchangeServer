@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,28 +16,37 @@ import javax.swing.JProgressBar;
 
 public class FtpDownload extends Thread {
 
-    public FtpDownload(JProgressBar sendProgress, DefaultListModel dm, Options options) {
-        this.sendProgress = sendProgress;
-        this.dm = dm;
-        this.options = options;
-        sendFile = new File(options.getSwndFileFullPath());
+    public FtpDownload(JProgressBar progressBar, String depNum) throws IOException {
+        this.options = new Options();
+        this.progressBar = progressBar;
+        this.depNum = depNum;
+        swndFullPath = new File("c:\\swnd5.arc");
     }
+    
+
+//    public FtpDownload(JProgressBar sendProgress, DefaultListModel dm, String depNum) {
+//        this.sendProgress = sendProgress;
+//        this.dm = dm;
+//        this.depNum = depNum;
+//        //this.options = options;
+//        //downloadFile = new File(options.getSwndFileFullPath());
+//    }
 
     @Override
     public void run() {
         try {
             downloadFile();
             
-            uploadInfo();                                                                   //загрузка информации о заказах на сервер
-
-            sendProgress.setValue(100);                 //установка значения 100% на прогресс баре
-            JOptionPane.showMessageDialog(null, "Файл успешно загружен на сервер");         //вывод сообщения об успешной загрузке
-            sendProgress.setVisible(false);                                                 //прячем прогресс бар
-            dm.clear();
+//            uploadInfo();                                                                   //загрузка информации о заказах на сервер
+//
+            progressBar.setValue(100);                 //установка значения 100% на прогресс баре
+//            JOptionPane.showMessageDialog(null, "Файл успешно загружен на сервер");         //вывод сообщения об успешной загрузке
+//            sendProgress.setVisible(false);                                                 //прячем прогресс бар
+//            dm.clear();
 
         } catch (MalformedURLException ex) {
             JOptionPane.showMessageDialog(null, "Другая ошибка (FTP): " + ex.toString()); //Вывод уведомления об ошибке на экран 
-            sendProgress.setVisible(false);
+            progressBar.setVisible(false);
 
         } catch (InterruptedException | IOException ex) { //
             String errorMsg;
@@ -56,19 +64,19 @@ public class FtpDownload extends Thread {
                 errorMsg = "Другая ошибка.";
             }
             JOptionPane.showMessageDialog(null, errorMsg + " Ex: " + ex.toString());                              //Вывод уведомления об ошибке на экран
-            sendProgress.setVisible(false);
+            progressBar.setVisible(false);
         }
     }
 
     private void downloadFile() throws MalformedURLException, IOException, InterruptedException {
-        //URL ur = new URL("ftp://mailru5o_im:im699000pass@5.101.156.8:/" + "swnd5.arc"); //oldFTPServerURL
-        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + options.getDepartmentNumber() + "/" + options.getSwndFileName());
+        URL ur = new URL("ftp://mailru5o_im:im699000pass@5.101.156.8:/" + depNum + "/swnd5.arc"); //oldFTPServerURL
+//        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
+//                + ":/" + options.getDepartmentNumber() + "/" + options.getSwndFileName());
         URLConnection urlConnection = ur.openConnection();
 
         //BufferedInputStream localFileInputStream = new BufferedInputStream(new FileInputStream(sendFile));
         BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
-        BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(sendFile));
+        BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(swndFullPath));
         
         //BufferedOutputStream sendFileOutputStream = new BufferedOutputStream(urlConnection.getOutputStream());
         
@@ -76,7 +84,7 @@ public class FtpDownload extends Thread {
         int i = 0;
         int progressValue;
         int oldProgressValue = 0;
-        double onePercent = sendFile.length() / 100.0;
+        double onePercent = swndFullPath.length() / 100.0;
 
         while ((line = getFileInputStream.read()) != -1) {
             i++;
@@ -85,7 +93,7 @@ public class FtpDownload extends Thread {
             localFileOutputStream.write(line);
             if ((progressValue != oldProgressValue) && (progressValue != 100)) {
                 Thread.sleep(0);
-                sendProgress.setValue(progressValue);
+                progressBar.setValue(progressValue);
             }
             oldProgressValue = progressValue;
         }
@@ -128,8 +136,9 @@ public class FtpDownload extends Thread {
         }
     }
 
-    private final DefaultListModel dm;
+    private final DefaultListModel dm = new DefaultListModel();
     private final Options options;
-    private final JProgressBar sendProgress;
-    private final File sendFile;
+    private final JProgressBar progressBar;
+    private final File swndFullPath;
+    private String depNum;
 }
