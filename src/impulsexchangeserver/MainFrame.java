@@ -5,6 +5,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -12,7 +16,9 @@ import javax.swing.JToggleButton;
 
 public class MainFrame extends javax.swing.JFrame {
 
-    public MainFrame() {
+    public MainFrame(LinkedList<String> ordersList) {
+        this.ordersList = ordersList;
+
         initComponents();
         exchangePanel.setLayout(new GridLayout(0, 7, 7, 7));
         setLocationRelativeTo(null);
@@ -21,30 +27,30 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void initPanelComponents() {
-        JLabel[] depNumLabel = new JLabel[elementsCount];
-        JLabel[] spaceLabel = new JLabel[elementsCount];
-        JProgressBar[] progressBar = new JProgressBar[elementsCount];
-        JButton[] openDirBtn = new JButton[elementsCount];
-        JButton[] detailsBtn = new JButton[elementsCount];
-        JButton[] toExchangeBtn = new JButton[elementsCount];
-        JToggleButton[] completeBtn = new JToggleButton[elementsCount];
+//        JLabel[] depNumLabel = new JLabel[elementsCount];
+//        JLabel[] spaceLabel = new JLabel[elementsCount];
+//        JProgressBar[] progressBar = new JProgressBar[elementsCount];
+//        JButton[] openDirBtn = new JButton[elementsCount];
+//        JButton[] detailsBtn = new JButton[elementsCount];
+//        JButton[] toExchangeBtn = new JButton[elementsCount];
+//        JToggleButton[] completeBtn = new JToggleButton[elementsCount];
 
-        for (int i = 0; i < elementsCount; i++) {
+        for (int i = 0; i < ordersList.size(); i++) {
             progressBar[i] = new JProgressBar();
             progressBar[i].setStringPainted(true);
             exchangePanel.add(progressBar[i]);
 
-            depNumLabel[i] = new JLabel("Отдел №" + i);
+            depNumLabel[i] = new JLabel("Отдел №" + ordersList.get(i));
             exchangePanel.add(depNumLabel[i]);
 
             toExchangeBtn[i] = new JButton("На обмен");
-            toExchangeBtn[i].setActionCommand("toExchangeBtn_" + i);
+            toExchangeBtn[i].setActionCommand("toExchangeBtn_" + ordersList.get(i));
             toExchangeBtn[i].addActionListener(this::btnsActionPerformed);
             toExchangeBtn[i].setFocusPainted(false);
             exchangePanel.add(toExchangeBtn[i]);
 
             completeBtn[i] = new JToggleButton("Готово");
-            completeBtn[i].setActionCommand("completeBtn_" + i);
+            completeBtn[i].setActionCommand("completeBtn_" + ordersList.get(i));
             completeBtn[i].addActionListener(this::btnsActionPerformed);
             completeBtn[i].setFocusPainted(false);
             exchangePanel.add(completeBtn[i]);
@@ -53,7 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
             exchangePanel.add(spaceLabel[i]);
 
             openDirBtn[i] = new JButton("...");
-            openDirBtn[i].setActionCommand("openDirBtn_" + i);
+            openDirBtn[i].setActionCommand("openDirBtn_" + ordersList.get(i));
             openDirBtn[i].addActionListener((evt) -> {
                 try {
                     this.openDirActionPerformed(evt);
@@ -65,7 +71,7 @@ public class MainFrame extends javax.swing.JFrame {
             exchangePanel.add(openDirBtn[i]);
 
             detailsBtn[i] = new JButton("Детали");
-            detailsBtn[i].setActionCommand("detailsBtn_" + i);
+            detailsBtn[i].setActionCommand("detailsBtn_" + ordersList.get(i));
             detailsBtn[i].addActionListener(this::detailsBtnActionPerformed);
             detailsBtn[i].setFocusPainted(false);
             exchangePanel.add(detailsBtn[i]);
@@ -80,7 +86,7 @@ public class MainFrame extends javax.swing.JFrame {
         System.out.println("evt = " + evt.paramString());
         Desktop.getDesktop().open(new File("C:\\windows"));
     }
-    
+
     private void detailsBtnActionPerformed(ActionEvent evt) {
         System.out.println("evt = " + evt.paramString());
         DetailsFrame detailsFrame = new DetailsFrame();
@@ -148,9 +154,25 @@ public class MainFrame extends javax.swing.JFrame {
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         System.out.println("framePreferredSize = " + this.getPreferredSize());
         System.out.println("frameSize = " + this.getSize());
+
+        try {
+            new FtpDownload(progressBar[0], "68").start();                  //Запуск второго потока для отправки файла на FTP
+            new FtpDownload(progressBar[1], "71").start();
+            new FtpDownload(progressBar[2], "73").start();
+        } catch (Exception ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
     private static final int elementsCount = 5;
+    private final List<String> ordersList;
+    JLabel[] depNumLabel = new JLabel[elementsCount];
+    JLabel[] spaceLabel = new JLabel[elementsCount];
+    JProgressBar[] progressBar = new JProgressBar[elementsCount];
+    JButton[] openDirBtn = new JButton[elementsCount];
+    JButton[] detailsBtn = new JButton[elementsCount];
+    JButton[] toExchangeBtn = new JButton[elementsCount];
+    JToggleButton[] completeBtn = new JToggleButton[elementsCount];
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel exchangePanel;
     private javax.swing.JButton mainDownloadBtn;

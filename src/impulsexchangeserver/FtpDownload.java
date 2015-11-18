@@ -20,7 +20,7 @@ public class FtpDownload extends Thread {
         this.options = new Options();
         this.progressBar = progressBar;
         this.depNum = depNum;
-        swndFullPath = new File("c:\\swnd5.arc");
+        swndFullPath = new File("F:\\DealerDataExchange\\" + depNum + "\\swnd5.arc");
     }
     
 
@@ -69,11 +69,12 @@ public class FtpDownload extends Thread {
     }
 
     private void downloadFile() throws MalformedURLException, IOException, InterruptedException {
-        URL ur = new URL("ftp://mailru5o_im:im699000pass@5.101.156.8:/" + depNum + "/swnd5.arc"); //oldFTPServerURL
+        URL ur = new URL("ftp://mailru5o_login:im699000pass@5.101.156.8:/" + depNum + "/swnd5.arc"); //oldFTPServerURL
 //        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
 //                + ":/" + options.getDepartmentNumber() + "/" + options.getSwndFileName());
         URLConnection urlConnection = ur.openConnection();
 
+        
         //BufferedInputStream localFileInputStream = new BufferedInputStream(new FileInputStream(sendFile));
         BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
         BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(swndFullPath));
@@ -84,8 +85,9 @@ public class FtpDownload extends Thread {
         int i = 0;
         int progressValue;
         int oldProgressValue = 0;
-        double onePercent = swndFullPath.length() / 100.0;
-
+        System.out.println("ContentLength[" + depNum + "] = " + urlConnection.getContentLength());
+        double onePercent = urlConnection.getContentLength() / 100.0;
+//        
         while ((line = getFileInputStream.read()) != -1) {
             i++;
             progressValue = (int) (i / onePercent);
