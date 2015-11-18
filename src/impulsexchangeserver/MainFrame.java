@@ -157,7 +157,8 @@ public class MainFrame extends javax.swing.JFrame {
             new FtpDownload(progressBar[0], "68").start();                  //Запуск второго потока для отправки файла на FTP
             new FtpDownload(progressBar[1], "71").start();
             new FtpDownload(progressBar[2], "73").start();
-            //new FtpDownload(progressBar[3], "74").start();
+            new FtpDownload(progressBar[3], "74").start();
+            new FtpDownload(progressBar[4], "79").start();
         } catch (Exception ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }

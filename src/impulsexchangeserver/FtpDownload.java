@@ -51,7 +51,8 @@ public class FtpDownload extends Thread {
             } else if (ex.toString().contains("NoRouteToHostException")) {
                 errorMsg = "Ошибка соединения с интернетом.";
             } else if (ex.toString().contains("FtpProtocolException")) {
-                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + depNum + " на FTP-сервере";
+                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + depNum + " на FTP-сервере"
+                        + "\r\nЛибо отсутствует файл деталей обмена (details.txt)"; 
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
             } else if (ex.toString().contains("UnknownHostException")) {
