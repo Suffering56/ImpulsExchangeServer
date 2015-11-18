@@ -5,14 +5,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 
 public class MainFrame extends javax.swing.JFrame {
@@ -63,7 +58,7 @@ public class MainFrame extends javax.swing.JFrame {
                 try {
                     this.openDirActionPerformed(evt);
                 } catch (IOException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("ex " + ex);
                 }
             });
             openDirBtn[i].setFocusPainted(false);
@@ -156,7 +151,6 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
     private static final int elementsCount = 5;
-    private GridLayout lay = new GridLayout(0, 5, 20, 20);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel exchangePanel;
     private javax.swing.JButton mainDownloadBtn;
