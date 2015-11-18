@@ -102,7 +102,8 @@ public class MainFrame extends javax.swing.JFrame {
         mainDownloadBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(710, 280));
+        setPreferredSize(new java.awt.Dimension(900, 280));
+        setResizable(false);
 
         exchangePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -134,16 +135,16 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(exchangePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(220, 220, 220)
+                .addGap(353, 353, 353)
                 .addComponent(mainDownloadBtn)
-                .addContainerGap(242, Short.MAX_VALUE))
+                .addContainerGap(356, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(5, 5, 5)
+                .addContainerGap()
                 .addComponent(mainDownloadBtn)
-                .addGap(5, 5, 5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(exchangePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5))
         );
@@ -152,13 +153,11 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
-        System.out.println("framePreferredSize = " + this.getPreferredSize());
-        System.out.println("frameSize = " + this.getSize());
-
         try {
             new FtpDownload(progressBar[0], "68").start();                  //Запуск второго потока для отправки файла на FTP
             new FtpDownload(progressBar[1], "71").start();
             new FtpDownload(progressBar[2], "73").start();
+            new FtpDownload(progressBar[3], "74").start();
         } catch (Exception ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
