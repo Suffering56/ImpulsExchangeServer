@@ -29,7 +29,7 @@ public class FtpDownload extends Thread {
             progressBar.setString(null);
             progressBar.setValue(0);
             boolean onUpdate = downloadDetails();
-            
+
             if (onUpdate == true) {
                 downloadFile();
                 progressBar.setValue(100);
@@ -38,13 +38,13 @@ public class FtpDownload extends Thread {
                 progressBar.setValue(100);
                 progressBar.setString("Нет новых данных");
             }
-            
-        } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(null, "Отдел №" + depNum + ". Другая ошибка (FTP): " + ex.toString()); //Вывод уведомления об ошибке на экран 
-            progressBar.setVisible(false);
 
-        } catch (InterruptedException | IOException ex) { //
-            //} catch (IOException ex) { //
+        } catch (MalformedURLException ex) {
+            JOptionPane.showMessageDialog(null, "Отдел №" + depNum + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
+            progressBar.setValue(0);
+            progressBar.setString("Ошибка");
+
+        } catch (InterruptedException | IOException ex) {
             String errorMsg;
             if (ex.toString().contains("FileNotFoundException")) {
                 errorMsg = "Файл обмена отсутствует, либо указан неверный путь.";
@@ -62,6 +62,32 @@ public class FtpDownload extends Thread {
             JOptionPane.showMessageDialog(null, "Отдел №" + depNum + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
             progressBar.setValue(0);
             progressBar.setString("Ошибка");
+        }
+    }
+
+    private boolean downloadDetails() throws MalformedURLException, IOException {
+//        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
+//                + ":/" + options.getDepartmentNumber() + "/info.txt");
+
+        URL ur = new URL("ftp://mailru5o_login:im699000pass@5.101.156.8:/" + depNum + "/info.txt"); //oldFTPServerURL
+        URLConnection urlConnection = ur.openConnection();
+        System.out.println("ContentLength[" + depNum + "] = " + urlConnection.getContentLength());
+
+        if (urlConnection.getContentLength() != 0) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            getDetails(in);
+            in.close();
+            return true;
+        } else {                                                                //Файл info.txt пуст --> отсутствует информация обмена
+            return false;
+        }
+    }
+
+    private void getDetails(BufferedReader in) throws IOException {
+        String line;
+        detailsList = new LinkedList();
+        while ((line = in.readLine()) != null) {
+            detailsList.add(line);
         }
     }
 
@@ -94,38 +120,6 @@ public class FtpDownload extends Thread {
         }
         getFileInputStream.close();
         localFileOutputStream.close();
-    }
-
-    private boolean downloadDetails() throws MalformedURLException, IOException {
-//        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-//                + ":/" + options.getDepartmentNumber() + "/info.txt");
-
-        URL ur = new URL("ftp://mailru5o_login:im699000pass@5.101.156.8:/" + depNum + "/info.txt"); //oldFTPServerURL
-        URLConnection urlConnection = ur.openConnection();
-        System.out.println("ContentLength[" + depNum + "] = " + urlConnection.getContentLength());
-        
-        if (urlConnection.getContentLength() != 0) {                            
-//            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//            getDetails(in);
-//            in.close();
-            return true;
-        } else {    //Файл info.txt пуст --> отсутствует информация обмена
-            return false;
-        } 
-    }
-
-    private void getDetails(BufferedReader in) throws IOException {
-        String line;
-        detailsList = new LinkedList();
-        try {
-            while ((line = in.readLine()) != null) {
-                detailsList.add(line);
-            }
-            in.close();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Создайте в каталоге с номером вашего отдела файл info.txt. Ex: " + ex.toString());
-            in.close();
-        }
     }
 
     private LinkedList<String> detailsList;
