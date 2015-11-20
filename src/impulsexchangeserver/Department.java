@@ -32,5 +32,5 @@ public class Department {
     
     private String number;
     private DepartmentStatus status;
-    private final LinkedList <String> detailsList;
+    private final LinkedList <String> detailsList;  //
 }

@@ -32,7 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
 //        JLabel[] spaceLabel = new JLabel[elementsCount];
 //        JProgressBar[] progressBar = new JProgressBar[elementsCount];
 //        JButton[] openDirBtn = new JButton[elementsCount];
-//        JButton[] detailsBtn = new JButton[elementsCount];
+//        JButton[] detailsBtn = new JButton[elementsCount]; 
 //        JButton[] toExchangeBtn = new JButton[elementsCount];
 //        JToggleButton[] completeBtn = new JToggleButton[elementsCount];
 

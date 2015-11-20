@@ -15,7 +15,7 @@ public class Options {
     }
 
     public void setOptions() throws IOException {
-        //String departmentNumberWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v departmentNumber /t REG_SZ /d " + departmentNumber + " /f";
+        //String departmentNumberWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v departmentNumber /t REG_SZ /d " + departmentNumber + " /f"; 
 //        String swndFileFullPathWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v swndFileFullPath /t REG_SZ /d " + swndFileFullPath + " /f";
 //        String swndFileNameWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v swndFileName /t REG_SZ /d " + swndFileName + " /f";
         String ftpAddressWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";

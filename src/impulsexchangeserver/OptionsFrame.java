@@ -14,7 +14,7 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     public OptionsFrame(Options options) {
         initComponents();
-        setLocationRelativeTo(null);                                            //this.setAlwaysOnTop(true);
+        setLocationRelativeTo(null);                                            //this.setAlwaysOnTop(true); 
         
         this.options = options;
 

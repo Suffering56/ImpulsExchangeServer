@@ -129,7 +129,6 @@
                                               <Component id="exchangePathField" min="-2" pref="178" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="chooseExchangePathBtn" linkSize="8" min="-2" pref="35" max="-2" attributes="0"/>
-                                              <EmptySpace pref="1" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="downloadPathField" min="-2" pref="179" max="-2" attributes="0"/>

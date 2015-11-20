@@ -128,5 +128,5 @@ public class FtpDownload extends Thread {
     private final JProgressBar progressBar;
     private final File swndFullPath;
     private final String depNum;
-    private Department department;// = new Department(depNum, DepartmentStatus.Update);
+    private Department department;// = new Department(depNum, DepartmentStatus.Update); 
 }
