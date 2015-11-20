@@ -16,8 +16,9 @@ import javax.swing.JToggleButton;
 
 public class MainFrame extends javax.swing.JFrame {
 
-    public MainFrame(LinkedList<String> ordersList) {
+    public MainFrame(LinkedList<String> ordersList, Options options) {
         this.ordersList = ordersList;
+        this.options = options;
 
         initComponents();
         exchangePanel.setLayout(new GridLayout(0, 7, 7, 7));
@@ -100,6 +101,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         exchangePanel = new javax.swing.JPanel();
         mainDownloadBtn = new javax.swing.JButton();
+        optionsCallBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(900, 280));
@@ -126,6 +128,13 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        optionsCallBtn.setText("Опции");
+        optionsCallBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsCallBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -137,13 +146,17 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(353, 353, 353)
                 .addComponent(mainDownloadBtn)
-                .addContainerGap(356, Short.MAX_VALUE))
+                .addGap(45, 45, 45)
+                .addComponent(optionsCallBtn)
+                .addContainerGap(246, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mainDownloadBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mainDownloadBtn)
+                    .addComponent(optionsCallBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(exchangePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5))
@@ -164,6 +177,12 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
+    private void optionsCallBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsCallBtnActionPerformed
+        OptionsFrame optFrame = new OptionsFrame(options);
+        optFrame.setVisible(true);
+    }//GEN-LAST:event_optionsCallBtnActionPerformed
+
+    private final Options options;
     private static final int elementsCount = 5;
     private final List<String> ordersList;
     JLabel[] depNumLabel = new JLabel[elementsCount];
@@ -176,5 +195,6 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel exchangePanel;
     private javax.swing.JButton mainDownloadBtn;
+    private javax.swing.JButton optionsCallBtn;
     // End of variables declaration//GEN-END:variables
 }
