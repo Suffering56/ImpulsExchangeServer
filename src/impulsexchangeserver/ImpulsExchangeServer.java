@@ -14,7 +14,7 @@ public class ImpulsExchangeServer {
         orders.add("79");
         
         Options options = new Options();
-        options.getOptions();                                                   //чтение настроек из реестра
+        //options.getOptions();                                                   //чтение настроек из реестра
         MainFrame mainFrame = new MainFrame(orders, options);
         mainFrame.setVisible(true);
     }
