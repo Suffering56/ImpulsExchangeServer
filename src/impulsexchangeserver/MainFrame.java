@@ -25,6 +25,7 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         initPanelComponents();
         this.setSize(this.getWidth(), (26 + 7) * elementsCount + 12 + 65);
+
     }
 
     private void initPanelComponents() {
@@ -185,6 +186,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final Options options;
     private static final int elementsCount = 5;
     private final List<String> ordersList;
+    
     JLabel[] depNumLabel = new JLabel[elementsCount];
     JLabel[] spaceLabel = new JLabel[elementsCount];
     JProgressBar[] progressBar = new JProgressBar[elementsCount];

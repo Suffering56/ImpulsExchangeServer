@@ -25,12 +25,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         this.tempDepartmentsList = getListClone(options.getDepartmentsList());  //получаем копию списка отделов
         departmentsList.setModel(tempDepartmentsList);
 
-        exchangePathField.setText(null);
         exchangePathField.setText(options.getExchangePath());
         exchangePathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         exchangePathChooser.setCurrentDirectory(new File("C:\\"));
 
-        downloadPathField.setText(null);
         downloadPathField.setText(options.getDownloadPath());
         downloadPathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         downloadPathChooser.setCurrentDirectory(new File("C:\\"));
@@ -384,31 +382,23 @@ public class OptionsFrame extends javax.swing.JFrame {
         options.setExchangePath(exchangePathField.getText());
         options.setExchangeFileName(exchangeFileNameField.getText());
 
-        try {
-            options.setOptions();
-        } catch (IOException ex) {
-            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            options.setOptions();
+//        } catch (IOException ex) {
+//            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void chooseExchangePathBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseExchangePathBtnActionPerformed
-        this.setAlwaysOnTop(false);
         if (exchangePathChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            exchangePath = exchangePathChooser.getSelectedFile();
-            exchangePathField.setText(exchangePath.getPath());
-            //!!!!! options.setExchangePath(exchangePath.getPath());
-            this.setAlwaysOnTop(true);
+            exchangePathField.setText(exchangePathChooser.getSelectedFile().getPath());
         }
     }//GEN-LAST:event_chooseExchangePathBtnActionPerformed
 
     private void chooseDownloadPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDownloadPathActionPerformed
-        this.setAlwaysOnTop(false);
         if (downloadPathChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            downloadPath = downloadPathChooser.getSelectedFile();
-            downloadPathField.setText(downloadPath.getPath());
-            //!!!!! options.setDownloadPath(downloadPath.getPath());
-            this.setAlwaysOnTop(true);
+            downloadPathField.setText(downloadPathChooser.getSelectedFile().getPath());
         }
     }//GEN-LAST:event_chooseDownloadPathActionPerformed
 
@@ -428,10 +418,8 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_addDepartmentBtnActionPerformed
 
     private final Options options;
-    private final Pattern p = Pattern.compile("\\d+");
     private final DefaultListModel tempDepartmentsList;
-    private File exchangePath = null;
-    private File downloadPath = null;
+    private final Pattern p = Pattern.compile("\\d+");
     private final JFileChooser exchangePathChooser = new JFileChooser();
     private final JFileChooser downloadPathChooser = new JFileChooser();
 

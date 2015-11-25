@@ -12,15 +12,20 @@ public class Options {
 
     public Options() throws IOException {
         this.departmentsList = new DefaultListModel();
+        firstStart();
     }
 
     public void setOptions() throws IOException {
         //String departmentNumberWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v departmentNumber /t REG_SZ /d " + departmentNumber + " /f"; 
 //        String swndFileFullPathWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v swndFileFullPath /t REG_SZ /d " + swndFileFullPath + " /f";
 //        String swndFileNameWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v swndFileName /t REG_SZ /d " + swndFileName + " /f";
-        String ftpAddressWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
-        String ftpLoginWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
-        String ftpPassWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
+        String ftpAddressWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
+        String ftpLoginWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
+        String ftpPassWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
+        
+//        String ftpAddressWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
+//        String ftpLoginWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
+//        String ftpPassWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
 
         //Runtime.getRuntime().exec(departmentNumberWQuery);
 //        Runtime.getRuntime().exec(swndFileFullPathWQuery);
@@ -75,13 +80,19 @@ public class Options {
     }
 
     private void firstStart() {
-//        swndFileFullPath = "c:\\swnd5.arc";
-//        swndFileName = "swnd5.arc";
-//        
         ftpAddress = "5.101.156.8";
         ftpLogin = "mailru5o_login";
         ftpPass = "im699000pass";
+        
+        departmentsList.add(0, "68");
+        departmentsList.add(1, "71");
+        departmentsList.add(2, "73");
+        departmentsList.add(3, "74");
+        departmentsList.add(4, "79");
 
+        exchangePath = "C:\\";
+        exchangeFileName = "swnd5.arc";
+        downloadPath = "C:\\";
     }
 
     public String getFtpLogin() {
