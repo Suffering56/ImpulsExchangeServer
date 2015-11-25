@@ -146,9 +146,9 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(353, 353, 353)
                 .addComponent(mainDownloadBtn)
-                .addGap(45, 45, 45)
+                .addGap(61, 61, 61)
                 .addComponent(optionsCallBtn)
-                .addContainerGap(246, Short.MAX_VALUE))
+                .addContainerGap(230, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

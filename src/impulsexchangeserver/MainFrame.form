@@ -35,9 +35,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="353" max="-2" attributes="0"/>
               <Component id="mainDownloadBtn" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
               <Component id="optionsCallBtn" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="246" max="32767" attributes="0"/>
+              <EmptySpace pref="230" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
