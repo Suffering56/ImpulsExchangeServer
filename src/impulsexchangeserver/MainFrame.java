@@ -5,10 +5,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -16,43 +15,43 @@ import javax.swing.JToggleButton;
 
 public class MainFrame extends javax.swing.JFrame {
 
-    public MainFrame(LinkedList<String> ordersList, Options options) {
-        this.ordersList = ordersList;
+    public MainFrame(Options options) {
         this.options = options;
+        this.departmentsList = options.getDepartmentsList();
 
         initComponents();
         exchangePanel.setLayout(new GridLayout(0, 7, 7, 7));
         setLocationRelativeTo(null);
         initPanelComponents();
-        this.setSize(this.getWidth(), (26 + 7) * elementsCount + 12 + 65);
+        this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 12 + 65);
 
     }
 
     private void initPanelComponents() {
-//        JLabel[] depNumLabel = new JLabel[elementsCount];
-//        JLabel[] spaceLabel = new JLabel[elementsCount];
-//        JProgressBar[] progressBar = new JProgressBar[elementsCount];
-//        JButton[] openDirBtn = new JButton[elementsCount];
-//        JButton[] detailsBtn = new JButton[elementsCount]; 
-//        JButton[] toExchangeBtn = new JButton[elementsCount];
-//        JToggleButton[] completeBtn = new JToggleButton[elementsCount];
+        depNumLabel = new JLabel[departmentsList.size()];
+        spaceLabel = new JLabel[departmentsList.size()];
+        progressBar = new JProgressBar[departmentsList.size()];
+        openDirBtn = new JButton[departmentsList.size()];
+        detailsBtn = new JButton[departmentsList.size()]; 
+        toExchangeBtn = new JButton[departmentsList.size()];
+        completeBtn = new JToggleButton[departmentsList.size()];
 
-        for (int i = 0; i < ordersList.size(); i++) {
+        for (int i = 0; i < departmentsList.size(); i++) {
             progressBar[i] = new JProgressBar();
             progressBar[i].setStringPainted(true);
             exchangePanel.add(progressBar[i]);
 
-            depNumLabel[i] = new JLabel("Отдел №" + ordersList.get(i));
+            depNumLabel[i] = new JLabel("Отдел №" + departmentsList.get(i));
             exchangePanel.add(depNumLabel[i]);
 
             toExchangeBtn[i] = new JButton("На обмен");
-            toExchangeBtn[i].setActionCommand("toExchangeBtn_" + ordersList.get(i));
+            toExchangeBtn[i].setActionCommand("toExchangeBtn_" + departmentsList.get(i));
             toExchangeBtn[i].addActionListener(this::btnsActionPerformed);
             toExchangeBtn[i].setFocusPainted(false);
             exchangePanel.add(toExchangeBtn[i]);
 
             completeBtn[i] = new JToggleButton("Готово");
-            completeBtn[i].setActionCommand("completeBtn_" + ordersList.get(i));
+            completeBtn[i].setActionCommand("completeBtn_" + departmentsList.get(i));
             completeBtn[i].addActionListener(this::btnsActionPerformed);
             completeBtn[i].setFocusPainted(false);
             exchangePanel.add(completeBtn[i]);
@@ -61,7 +60,7 @@ public class MainFrame extends javax.swing.JFrame {
             exchangePanel.add(spaceLabel[i]);
 
             openDirBtn[i] = new JButton("...");
-            openDirBtn[i].setActionCommand("openDirBtn_" + ordersList.get(i));
+            openDirBtn[i].setActionCommand("openDirBtn_" + departmentsList.get(i));
             openDirBtn[i].addActionListener((evt) -> {
                 try {
                     this.openDirActionPerformed(evt);
@@ -73,7 +72,7 @@ public class MainFrame extends javax.swing.JFrame {
             exchangePanel.add(openDirBtn[i]);
 
             detailsBtn[i] = new JButton("Детали");
-            detailsBtn[i].setActionCommand("detailsBtn_" + ordersList.get(i));
+            detailsBtn[i].setActionCommand("detailsBtn_" + departmentsList.get(i));
             detailsBtn[i].addActionListener(this::detailsBtnActionPerformed);
             detailsBtn[i].setFocusPainted(false);
             exchangePanel.add(detailsBtn[i]);
@@ -184,16 +183,16 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_optionsCallBtnActionPerformed
 
     private final Options options;
-    private static final int elementsCount = 5;
-    private final List<String> ordersList;
+    //private static final int elementsCount = 5;
+    private final DefaultListModel departmentsList;
     
-    JLabel[] depNumLabel = new JLabel[elementsCount];
-    JLabel[] spaceLabel = new JLabel[elementsCount];
-    JProgressBar[] progressBar = new JProgressBar[elementsCount];
-    JButton[] openDirBtn = new JButton[elementsCount];
-    JButton[] detailsBtn = new JButton[elementsCount];
-    JButton[] toExchangeBtn = new JButton[elementsCount];
-    JToggleButton[] completeBtn = new JToggleButton[elementsCount];
+    private JLabel[] depNumLabel;// = new JLabel[elementsCount];
+    private JLabel[] spaceLabel;// = new JLabel[elementsCount];
+    private JProgressBar[] progressBar;// = new JProgressBar[elementsCount];
+    private JButton[] openDirBtn;// = new JButton[elementsCount];
+    private JButton[] detailsBtn;// = new JButton[elementsCount];
+    private JButton[] toExchangeBtn;// = new JButton[elementsCount];
+    private JToggleButton[] completeBtn;// = new JToggleButton[elementsCount];
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel exchangePanel;
     private javax.swing.JButton mainDownloadBtn;

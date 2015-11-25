@@ -12,57 +12,38 @@ public class Options {
 
     public Options() throws IOException {
         this.departmentsList = new DefaultListModel();
-        firstStart();
     }
 
-    public void setOptions() throws IOException {
-        //String departmentNumberWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v departmentNumber /t REG_SZ /d " + departmentNumber + " /f"; 
-//        String swndFileFullPathWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v swndFileFullPath /t REG_SZ /d " + swndFileFullPath + " /f";
-//        String swndFileNameWQuery = "REG ADD HKCU\\Software\\ImpulsDataExchange /v swndFileName /t REG_SZ /d " + swndFileName + " /f";
-        String ftpAddressWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
-        String ftpLoginWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
-        String ftpPassWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
-        
-//        String ftpAddressWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
-//        String ftpLoginWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
-//        String ftpPassWQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
-
-        //Runtime.getRuntime().exec(departmentNumberWQuery);
-//        Runtime.getRuntime().exec(swndFileFullPathWQuery);
-//        Runtime.getRuntime().exec(swndFileNameWQuery);
-        Runtime.getRuntime().exec(ftpAddressWQuery);
-        Runtime.getRuntime().exec(ftpLoginWQuery);
-        Runtime.getRuntime().exec(ftpPassWQuery);
-    }
-
-    public void getOptions() throws IOException {                                           //получение настроек из реестра
-        String dataOptionsQuery[] = {depNum, filePath, fileName, address, login, password}; //инициализация запросов к реестру
+    public void getOptions() throws IOException {                                       //получение настроек из реестра
+        String optionsReadQuery[] = {ftpAddressReadQuery, ftpLoginReadQuery, ftpPasswordReadQuery, departmentsListReadQuery,
+            exchangePathReadQuery, exchangeFileNameReadQuery, downloadPathReadQuery};   //инициализация запросов к реестру
         LinkedList<String> optionsList = new LinkedList();
         int nullOptionsCounter = 0;
 
-        for (String query : dataOptionsQuery) {
+        for (String query : optionsReadQuery) {
             Process process = Runtime.getRuntime().exec(query);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));    //чтение данных реестра
             String line;
             String parseLine = "";
 
             while ((line = reader.readLine()) != null) {
-                if (line.contains("REG_SZ")) {                                                              //извлечение нужной строки потока реестра
-                    parseLine = line.trim();                                                                //PS: там почему-то не в одной строке все хранится
+                if (line.contains("REG_SZ")) {                                              //извлечение нужной строки потока реестра
+                    parseLine = line.trim();                                                //PS: там почему-то не в одной строке все хранится
                 }
             }
             reader.close();
+            process.destroy();
 
             Matcher m = p.matcher(parseLine);
             if (m.matches()) {
-                optionsList.add(m.group(1));                                                                //извлечение нужного значения ключа реестра
-            } else {                                                                        //либо если ключ(значение) отсутствует (не соответствует шаблону)
-                optionsList.add("");                                                                        //извлечение пустого значения (для избежания ошибки)             
+                optionsList.add(m.group(1));                                                //извлечение нужного значения ключа реестра
+            } else {                                                                        //либо если ключ(значение) отсутствует (не соответствует шаблону)...
+                optionsList.add("");                                                        //...извлечение пустого значения (для избежания ошибки)             
                 nullOptionsCounter++;
             }
         }
 
-        if (nullOptionsCounter == 6) {
+        if (nullOptionsCounter == 7) {
             firstStart();                                                                   //загрузка значений по-умолчанию при первом запуске программы
             setOptions();
         } else {
@@ -70,29 +51,73 @@ public class Options {
         }
     }
 
-    private void importOptionsIntoProgramm(LinkedList<String> optionsList) {
-        //departmentNumber = optionsList.get(0);
-//        swndFileFullPath = optionsList.get(1);
-//        swndFileName = optionsList.get(2);
-        ftpAddress = optionsList.get(3);
-        ftpLogin = optionsList.get(4);
-        ftpPass = optionsList.get(5);
-    }
-
     private void firstStart() {
         ftpAddress = "5.101.156.8";
         ftpLogin = "mailru5o_login";
         ftpPass = "im699000pass";
-        
-        departmentsList.add(0, "68");
-        departmentsList.add(1, "71");
-        departmentsList.add(2, "73");
-        departmentsList.add(3, "74");
-        departmentsList.add(4, "79");
-
         exchangePath = "C:\\";
         exchangeFileName = "swnd5.arc";
         downloadPath = "C:\\";
+    }
+
+    private void importOptionsIntoProgramm(LinkedList<String> optionsList) {
+        ftpAddress = optionsList.get(0);
+        ftpLogin = optionsList.get(1);
+        ftpPass = optionsList.get(2);
+        departmentsList = strToList(optionsList.get(3));
+        exchangePath = optionsList.get(4);
+        exchangeFileName = optionsList.get(5);
+        downloadPath = optionsList.get(6);
+    }
+
+    private DefaultListModel strToList(String str) {
+        DefaultListModel list = new DefaultListModel();
+        String tempStr = "";
+        char[] ch = str.toCharArray();
+        for (int i = 0; i < ch.length; i++) {
+            if (ch[i] != '_') {
+                tempStr = tempStr + ch[i];
+            } else {
+                if (!tempStr.isEmpty()) {           //если список отделов пуст
+                    list.addElement(tempStr);
+                }
+                tempStr = "";
+            }
+        }
+        return list;
+    }
+
+    private String listToStr(DefaultListModel list) {
+        String str = "";
+        if (!list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                str = str + list.get(i) + "_";
+            }
+            System.out.println("str = " + str);
+            return str;
+        } else {
+            return "_";
+        }
+    }
+
+    public void setOptions() throws IOException {
+        String ftpAddressWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
+        String ftpLoginWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
+        String ftpPassWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
+        String departmentsListWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v departmentsListString /t REG_SZ /d " + listToStr(departmentsList) + " /f";
+        String exchangePathWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v exchangePath /t REG_SZ /d " + exchangePath + " /f";
+        String exchangeFileNameWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v exchangeFileName /t REG_SZ /d " + exchangeFileName + " /f";
+        String downloadPathWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v downloadPath /t REG_SZ /d " + downloadPath + " /f";
+
+        String optionsWriteQuery[] = {ftpAddressWriteQuery, ftpLoginWriteQuery, ftpPassWriteQuery, departmentsListWriteQuery,
+            exchangePathWriteQuery, exchangeFileNameWriteQuery, downloadPathWriteQuery}; //инициализация запросов на изменение реестра
+
+        for (String query : optionsWriteQuery) {
+            Process process = Runtime.getRuntime().exec(query);
+            while (process.isAlive()) {
+            }
+            process.destroy();                  //!!!!!!!!!Добавить в клиентскую версию
+        }
     }
 
     public String getFtpLogin() {
@@ -154,17 +179,18 @@ public class Options {
     private String ftpLogin;
     private String ftpPass;
     private String ftpAddress;
-
     private DefaultListModel departmentsList;
     private String exchangePath;
     private String exchangeFileName;
     private String downloadPath;
 
     private final Pattern p = Pattern.compile("\\w+\\p{Space}+REG_SZ\\p{Space}+(.+)");                      //Шаблон для извлечения параметра ключа реестра
-    private final String depNum = "REG QUERY HKCU\\Software\\ImpulsDataExchange /v departmentNumber";
-    private final String filePath = "REG QUERY HKCU\\Software\\ImpulsDataExchange /v swndFileFullPath";
-    private final String fileName = "REG QUERY HKCU\\Software\\ImpulsDataExchange /v swndFileName";
-    private final String address = "REG QUERY HKCU\\Software\\ImpulsDataExchange /v ftpAddress";
-    private final String login = "REG QUERY HKCU\\Software\\ImpulsDataExchange /v ftpLogin";
-    private final String password = "REG QUERY HKCU\\Software\\ImpulsDataExchange /v ftpPass";
+
+    private final String ftpAddressReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpAddress";
+    private final String ftpLoginReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpLogin";
+    private final String ftpPasswordReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpPass";
+    private final String departmentsListReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v departmentsListString";
+    private final String exchangePathReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangePath";
+    private final String exchangeFileNameReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangeFileName";
+    private final String downloadPathReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v downloadPath";
 }

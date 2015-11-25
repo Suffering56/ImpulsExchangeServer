@@ -15,7 +15,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     public OptionsFrame(Options options) {
         initComponents();
         setLocationRelativeTo(null);                                            //this.setAlwaysOnTop(true); 
-        
+
         this.options = options;
 
         ftpAddressField.setText(options.getFtpAddress());
@@ -144,6 +144,11 @@ public class OptionsFrame extends javax.swing.JFrame {
         jLabel3.setText("Новый отдел:");
 
         removeDepartmentBtn.setText("Удалить выделенный отдел");
+        removeDepartmentBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeDepartmentBtnActionPerformed(evt);
+            }
+        });
 
         jLabel9.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel9.setText("<html>Путь к <br>папке загрузки:</html>");
@@ -181,14 +186,11 @@ public class OptionsFrame extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(newDepartmentField, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(newDepartmentField)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(addDepartmentBtn))
-                                .addComponent(removeDepartmentBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(addDepartmentBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -198,8 +200,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addComponent(exchangePathField, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(chooseExchangePathBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(chooseExchangePathBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addComponent(downloadPathField, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -207,7 +208,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(exchangeFileNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                    .addComponent(exchangeFileNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(removeDepartmentBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
@@ -216,6 +219,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel2, jLabel9});
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chooseDownloadPath, chooseExchangePathBtn});
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel3, newDepartmentField});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,11 +387,14 @@ public class OptionsFrame extends javax.swing.JFrame {
         options.setExchangePath(exchangePathField.getText());
         options.setExchangeFileName(exchangeFileNameField.getText());
 
-//        try {
-//            options.setOptions();
-//        } catch (IOException ex) {
-//            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            options.setOptions();
+            if (switcher) {
+                JOptionPane.showMessageDialog(null, "Был изменен список отделов.\nЧтобы изменения вступили в силу, пожалуйста перезапустите программу.");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed
 
@@ -408,6 +416,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         if (m.matches()) {
             if (!tempDepartmentsList.contains(newDep)) {
                 tempDepartmentsList.addElement(newDep);
+                switcher = true;
             } else {
                 JOptionPane.showMessageDialog(null, "Отдел №" + newDep + " уже есть в списке!");
             }
@@ -417,12 +426,20 @@ public class OptionsFrame extends javax.swing.JFrame {
         newDepartmentField.setText(null);
     }//GEN-LAST:event_addDepartmentBtnActionPerformed
 
+    private void removeDepartmentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDepartmentBtnActionPerformed
+        if (departmentsList.getSelectedIndex() != -1) {                              //Если заказ выбран
+            tempDepartmentsList.remove(departmentsList.getSelectedIndex());          //Удалить из списка
+            switcher = true;
+        }
+    }//GEN-LAST:event_removeDepartmentBtnActionPerformed
+
     private final Options options;
     private final DefaultListModel tempDepartmentsList;
     private final Pattern p = Pattern.compile("\\d+");
     private final JFileChooser exchangePathChooser = new JFileChooser();
     private final JFileChooser downloadPathChooser = new JFileChooser();
-
+    private boolean switcher = false;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDepartmentBtn;
     private javax.swing.JButton cancelBtn;

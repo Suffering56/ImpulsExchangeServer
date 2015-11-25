@@ -2,9 +2,9 @@ package impulsexchangeserver;
 
 import java.util.LinkedList;
 
-public class Department {
+public class Department1 {
 
-    public Department(String number, DepartmentStatus status) {
+    public Department1(String number, DepartmentStatus status) {
         this.detailsList = new LinkedList();
         this.number = number;
         this.status = status;
