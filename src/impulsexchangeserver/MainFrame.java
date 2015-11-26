@@ -167,11 +167,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         try {
-            new FtpDownload(progressBar[0], "68").start();                  //Запуск второго потока для отправки файла на FTP
-            new FtpDownload(progressBar[1], "71").start();
-            new FtpDownload(progressBar[2], "73").start();
-            new FtpDownload(progressBar[3], "74").start();
-            new FtpDownload(progressBar[4], "79").start();
+            for (int i = 0; i < departmentsList.size(); i++) {
+                new FtpDownload(progressBar[i], departmentsList.get(i)).start(); //Запуск дополнительных потоков для отправки файла на FTP
+            }
         } catch (Exception ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -183,16 +181,15 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_optionsCallBtnActionPerformed
 
     private final Options options;
-    //private static final int elementsCount = 5;
-    private final DefaultListModel departmentsList;
+    private final DefaultListModel <String> departmentsList;
     
-    private JLabel[] depNumLabel;// = new JLabel[elementsCount];
-    private JLabel[] spaceLabel;// = new JLabel[elementsCount];
-    private JProgressBar[] progressBar;// = new JProgressBar[elementsCount];
-    private JButton[] openDirBtn;// = new JButton[elementsCount];
-    private JButton[] detailsBtn;// = new JButton[elementsCount];
-    private JButton[] toExchangeBtn;// = new JButton[elementsCount];
-    private JToggleButton[] completeBtn;// = new JToggleButton[elementsCount];
+    private JLabel[] depNumLabel;
+    private JLabel[] spaceLabel;
+    private JProgressBar[] progressBar;
+    private JButton[] openDirBtn;
+    private JButton[] detailsBtn;
+    private JButton[] toExchangeBtn;
+    private JToggleButton[] completeBtn;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel exchangePanel;
     private javax.swing.JButton mainDownloadBtn;

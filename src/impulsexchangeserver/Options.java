@@ -144,11 +144,11 @@ public class Options {
         this.ftpAddress = ftpAddress;
     }
 
-    public DefaultListModel getDepartmentsList() {
+    public DefaultListModel <String> getDepartmentsList() {
         return departmentsList;
     }
 
-    public void setDepartmentsList(DefaultListModel departmentsList) {
+    public void setDepartmentsList(DefaultListModel <String> departmentsList) {
         this.departmentsList = departmentsList;
     }
 
@@ -179,7 +179,7 @@ public class Options {
     private String ftpLogin;
     private String ftpPass;
     private String ftpAddress;
-    private DefaultListModel departmentsList;
+    private DefaultListModel <String> departmentsList;
     private String exchangePath;
     private String exchangeFileName;
     private String downloadPath;
