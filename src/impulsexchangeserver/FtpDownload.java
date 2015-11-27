@@ -16,11 +16,11 @@ import javax.swing.JProgressBar;
 
 public class FtpDownload extends Thread {
 
-    public FtpDownload(JProgressBar progressBar, String depNum) throws IOException {
-        this.options = new Options();
+    public FtpDownload(Options options, JProgressBar progressBar, String departmentNumber) throws IOException {
+        this.options = options;
         this.progressBar = progressBar;
-        this.depNum = depNum;
-        swndFullPath = new File("F:\\DealerDataExchange\\" + depNum + "\\swnd5.arc");
+        this.department = departmentNumber;
+        downloadPath = new File(options.getDownloadPath() + "\\" + department + "\\" + options.getExchangeFileName());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class FtpDownload extends Thread {
             }
 
         } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(null, "Отдел №" + depNum + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
+            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
             progressBar.setValue(0);
             progressBar.setString("Ошибка");
 
@@ -51,7 +51,7 @@ public class FtpDownload extends Thread {
             } else if (ex.toString().contains("NoRouteToHostException")) {
                 errorMsg = "Ошибка соединения с интернетом.";
             } else if (ex.toString().contains("FtpProtocolException")) {
-                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + depNum + " на FTP-сервере"
+                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + department + " на FTP-сервере"
                         + "\r\nЛибо отсутствует файл деталей обмена (details.txt)";                     //
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
@@ -60,26 +60,23 @@ public class FtpDownload extends Thread {
             } else {
                 errorMsg = "Другая ошибка.";
             }
-            JOptionPane.showMessageDialog(null, "Отдел №" + depNum + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
+            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
             progressBar.setValue(0);
             progressBar.setString("Ошибка");
         }
     }
 
     private boolean downloadDetails() throws MalformedURLException, IOException {
-//        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-//                + ":/" + options.getDepartmentNumber() + "/info.txt");
-
-        URL ur = new URL("ftp://mailru5o_login:im699000pass@5.101.156.8:/" + depNum + "/info.txt"); //oldFTPServerURL
+        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
+                + ":/" + department + "/info.txt");
         URLConnection urlConnection = ur.openConnection();
-        System.out.println("ContentLength[" + depNum + "] = " + urlConnection.getContentLength());
 
         if (urlConnection.getContentLength() != 0) {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             getDetails(in);
             in.close();
             return true;
-        } else {                                                                //Файл info.txt пуст --> отсутствует информация обмена
+        } else {        //Файл info.txt пуст --> отсутствует информация обмена
             return false;
         }
     }
@@ -93,14 +90,12 @@ public class FtpDownload extends Thread {
     }
 
     private void downloadFile() throws MalformedURLException, IOException, InterruptedException {
-//         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-//                + ":/" + options.getDepartmentNumber() + "/" + options.getSwndFileName());
-
-        URL ur = new URL("ftp://mailru5o_login:im699000pass@5.101.156.8:/" + depNum + "/swnd5.arc"); //oldFTPServerURL
+        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
+                + ":/" + department + "/" + options.getExchangeFileName());
         URLConnection urlConnection = ur.openConnection();
 
         BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
-        BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(swndFullPath));
+        BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(downloadPath));
 
         int line;
         int i = 0;
@@ -126,6 +121,6 @@ public class FtpDownload extends Thread {
     private LinkedList<String> detailsList;
     private final Options options;
     private final JProgressBar progressBar;
-    private final File swndFullPath;
-    private final String depNum;
+    private final File downloadPath;
+    private final String department;
 }

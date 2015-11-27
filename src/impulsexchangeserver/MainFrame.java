@@ -24,7 +24,6 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         initPanelComponents();
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 12 + 65);
-
     }
 
     private void initPanelComponents() {
@@ -80,11 +79,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void btnsActionPerformed(ActionEvent evt) {
-        System.out.println("evt = " + evt.paramString());
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
-        System.out.println("evt = " + evt.paramString());
         Desktop.getDesktop().open(new File("C:\\windows"));
     }
 
@@ -168,7 +165,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
-                new FtpDownload(progressBar[i], departmentsList.get(i)).start(); //Запуск дополнительных потоков для отправки файла на FTP
+                new FtpDownload(options, progressBar[i], departmentsList.get(i)).start(); //Запуск дополнительных потоков для отправки файла на FTP
             }
         } catch (Exception ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);

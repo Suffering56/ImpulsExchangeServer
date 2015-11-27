@@ -2,8 +2,6 @@ package impulsexchangeserver;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
@@ -14,10 +12,9 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     public OptionsFrame(Options options) {
         initComponents();
-        setLocationRelativeTo(null);                                            //this.setAlwaysOnTop(true); 
-
+        setLocationRelativeTo(null);
         this.options = options;
-
+        
         ftpAddressField.setText(options.getFtpAddress());
         ftpLoginField.setText(options.getFtpLogin());
         ftpPassField.setText(options.getFtpPass());
@@ -27,11 +24,11 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         exchangePathField.setText(options.getExchangePath());
         exchangePathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        exchangePathChooser.setCurrentDirectory(new File("C:\\"));
+        exchangePathChooser.setCurrentDirectory(new File(options.getExchangePath()));
 
         downloadPathField.setText(options.getDownloadPath());
         downloadPathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        downloadPathChooser.setCurrentDirectory(new File("C:\\"));
+        downloadPathChooser.setCurrentDirectory(new File(options.getDownloadPath()));
 
         exchangeFileNameField.setText(options.getExchangeFileName());
     }
@@ -393,7 +390,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Был изменен список отделов.\nЧтобы изменения вступили в силу, пожалуйста перезапустите программу.");
             }
         } catch (IOException ex) {
-            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Неизвестная ошибка:\r\nКод: " + ex.toString());
         }
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed

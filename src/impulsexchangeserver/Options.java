@@ -27,8 +27,8 @@ public class Options {
             String parseLine = "";
 
             while ((line = reader.readLine()) != null) {
-                if (line.contains("REG_SZ")) {                                              //извлечение нужной строки потока реестра
-                    parseLine = line.trim();                                                //PS: там почему-то не в одной строке все хранится
+                if (line.contains("REG_SZ")) {             //извлечение нужной строки потока реестра
+                    parseLine = line.trim();               //PS: там почему-то не в одной строке все хранится
                 }
             }
             reader.close();
@@ -36,18 +36,18 @@ public class Options {
 
             Matcher m = p.matcher(parseLine);
             if (m.matches()) {
-                optionsList.add(m.group(1));                                                //извлечение нужного значения ключа реестра
-            } else {                                                                        //либо если ключ(значение) отсутствует (не соответствует шаблону)...
-                optionsList.add("");                                                        //...извлечение пустого значения (для избежания ошибки)             
+                optionsList.add(m.group(1));               //извлечение нужного значения ключа реестра
+            } else {                                       //либо если ключ(значение) отсутствует (не соответствует шаблону)...
+                optionsList.add("");                       //...извлечение пустого значения (для избежания ошибки)             
                 nullOptionsCounter++;
             }
         }
 
         if (nullOptionsCounter == 7) {
-            firstStart();                                                                   //загрузка значений по-умолчанию при первом запуске программы
+            firstStart();                                  //загрузка значений по-умолчанию при первом запуске программы
             setOptions();
         } else {
-            importOptionsIntoProgramm(optionsList);                                         //запись извлеченных параметров в класс Options
+            importOptionsIntoProgramm(optionsList);        //запись извлеченных параметров в класс Options
         }
     }
 
@@ -57,7 +57,7 @@ public class Options {
         ftpPass = "im699000pass";
         exchangePath = "C:\\";
         exchangeFileName = "swnd5.arc";
-        downloadPath = "C:\\";
+        downloadPath = "C:\\DealerDataExchange";
     }
 
     private void importOptionsIntoProgramm(LinkedList<String> optionsList) {
@@ -184,7 +184,7 @@ public class Options {
     private String exchangeFileName;
     private String downloadPath;
 
-    private final Pattern p = Pattern.compile("\\w+\\p{Space}+REG_SZ\\p{Space}+(.+)");                      //Шаблон для извлечения параметра ключа реестра
+    private final Pattern p = Pattern.compile("\\w+\\p{Space}+REG_SZ\\p{Space}+(.+)");    //Шаблон для извлечения параметра ключа реестра
 
     private final String ftpAddressReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpAddress";
     private final String ftpLoginReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpLogin";
