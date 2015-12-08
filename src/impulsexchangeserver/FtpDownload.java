@@ -16,10 +16,12 @@ import javax.swing.JProgressBar;
 
 public class FtpDownload extends Thread {
 
-    public FtpDownload(Options options, JProgressBar progressBar, String departmentNumber) throws IOException {
+    public FtpDownload(Options options, JProgressBar progressBar, ActiveOrders activeOrders) throws IOException {
         this.options = options;
         this.progressBar = progressBar;
-        this.department = departmentNumber;
+        this.activeOrders = activeOrders;
+        
+        department = activeOrders.getDepartmentNumber();
         downloadPath = new File(options.getDownloadPath() + "\\" + department + "\\" + options.getExchangeFileName());
     }
 
@@ -33,9 +35,12 @@ public class FtpDownload extends Thread {
             if (onUpdate == true) {
                 downloadFile();
                 progressBar.setValue(100);
+                activeOrders.setUdpated(true);
+                activeOrders.setDetailsList(detailsList);
                 progressBar.setString("Загружено");
-            } else {
-                progressBar.setValue(100);
+            } else {                                                            //если нет новых данныхх
+                progressBar.setValue(100);  
+                activeOrders.setUdpated(false);                                 //помечаем данный отдел, как необновленный
                 progressBar.setString("Нет новых данных");
             }
 
@@ -73,7 +78,7 @@ public class FtpDownload extends Thread {
 
         if (urlConnection.getContentLength() != 0) {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            getDetails(in);
+            extractDetails(in);
             in.close();
             return true;
         } else {        //Файл info.txt пуст --> отсутствует информация обмена
@@ -81,7 +86,7 @@ public class FtpDownload extends Thread {
         }
     }
 
-    private void getDetails(BufferedReader in) throws IOException {
+    private void extractDetails(BufferedReader in) throws IOException {
         String line;
         detailsList = new LinkedList();
         while ((line = in.readLine()) != null) {
@@ -117,10 +122,11 @@ public class FtpDownload extends Thread {
         getFileInputStream.close();
         localFileOutputStream.close();
     }
-
+    
     private LinkedList<String> detailsList;
     private final Options options;
     private final JProgressBar progressBar;
     private final File downloadPath;
     private final String department;
+    private final ActiveOrders activeOrders;
 }

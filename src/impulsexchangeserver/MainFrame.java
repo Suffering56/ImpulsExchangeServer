@@ -5,25 +5,28 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.LinkedList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
+import static jdk.nashorn.internal.objects.NativeError.printStackTrace;
 
 public class MainFrame extends javax.swing.JFrame {
 
     public MainFrame(Options options) {
         this.options = options;
         this.departmentsList = options.getDepartmentsList();
+        
 
         initComponents();
         exchangePanel.setLayout(new GridLayout(0, 5, 7, 7));
         setLocationRelativeTo(null);
         initPanelComponents();
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
+        
+        activeOrders = new ActiveOrders[departmentsList.size()];
     }
 
     private void initPanelComponents() {
@@ -125,6 +128,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jButton1.setText("Список загруженных заказов");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jButton2.setText("Завершить обмен");
@@ -200,11 +208,14 @@ public class MainFrame extends javax.swing.JFrame {
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
-                new FtpDownload(options, progressBar[i], departmentsList.get(i)).start(); //Запуск дополнительных потоков для отправки файла на FTP
+                activeOrders[i] = new ActiveOrders();
+                activeOrders[i].setDepartmentNumber(departmentsList.get(i));
+                new FtpDownload(options, progressBar[i], activeOrders[i]).start(); //Запуск дополнительных потоков для отправки файла на FTP
             }
         } catch (Exception ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            printStackTrace(ex);
         }
+        
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
     private void optionsCallMenuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsCallMenuBtnActionPerformed
@@ -216,6 +227,19 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        LinkedList <ActiveOrders> printOrders = new LinkedList();
+        for (ActiveOrders activeOrder : activeOrders) {
+            if (activeOrder.isUdpated() == true) {
+                printOrders.add(activeOrder);
+            }
+        }
+        
+        PrintFrame pr = new PrintFrame(printOrders);
+        pr.setVisible(true);
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private final Options options;
     private final DefaultListModel<String> departmentsList;
 
@@ -224,6 +248,8 @@ public class MainFrame extends javax.swing.JFrame {
     private JButton[] openDirBtn;
     private JButton[] detailsBtn;
     private JToggleButton[] toExchangeBtn;
+    private final ActiveOrders activeOrders[];
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel exchangePanel;
     private javax.swing.JButton jButton1;
