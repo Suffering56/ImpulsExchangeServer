@@ -2,7 +2,7 @@ package impulsexchangeserver;
 
 import java.util.LinkedList;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 public class PrintFrame extends javax.swing.JFrame {
@@ -11,40 +11,46 @@ public class PrintFrame extends javax.swing.JFrame {
         this.printOrders = printOrders;
 
         initComponents();
-
-        //setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
         mainPanel.setLayout(null);
+
         initPanelComponents();
         System.out.println("print orders size = " + printOrders.size());
     }
 
     private void initPanelComponents() {
         panel = new JPanel[printOrders.size()];
-        int x = 0;
         int y = 0;
-        JButton jl;
+        int cbxHeight = 23;
+        int cbxBetweenSpacer = 3;
+        int cbxFirstLastSpacer = 5;
+        int panelBetweenSpacer = 5;
+        JCheckBox jl;
         for (int i = 0; i < printOrders.size(); i++) {
+            int dListSize = printOrders.get(i).getDetailsList().size();
+            int panelHeight;// = 26 * dListSize + 10;
+            int yy = cbxFirstLastSpacer;
             panel[i] = new JPanel();
             panel[i].setLayout(null);
-            panel[i].setSize(300, 100);
-            panel[i].setLocation(x, y);
             panel[i].setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-            jl = new JButton(printOrders.get(i).getDepartmentNumber());
-            jl.setLocation(0, 0);
-            jl.setSize(200, 80);
-      //      jl.setVisible(true);
-            panel[i].add(jl);
+            
+            for (int j = 0; j < dListSize; j++) {
+                jl = new JCheckBox(printOrders.get(i).getDetailsList().get(j));
+                jl.setSize(85, cbxHeight);
+                jl.setLocation(5, yy);
+                yy = yy + cbxHeight + cbxBetweenSpacer;
+                panel[i].add(jl);
+                System.out.println("yy = " + yy);
+            }
+            panelHeight = yy - cbxBetweenSpacer + cbxFirstLastSpacer;
+            panel[i].setSize(300, panelHeight);
+            panel[i].setLocation(0, y);
+            y = y + panelHeight + panelBetweenSpacer;
+            System.out.println("y = " + y);
             mainPanel.add(panel[i]);
-//            jl = new JButton(printOrders.get(i).getDepartmentNumber());
-//            jl.setLocation(x, y);
-//            jl.setSize(200, 80);
-//            jl.setVisible(true);
-//            mainPanel.add(jl);
-//            System.out.println("!!! " + printOrders.get(i).getDepartmentNumber());
-//            System.out.println("jlLocation" + jl.getLocation());
-//            System.out.println("jlSize" + jl.getSize());
-            y = y + 105;
         }
+        this.setSize(this.getSize().width, y + 39 - panelBetweenSpacer);
+        this.repaint();
     }
 
     @SuppressWarnings("unchecked")
@@ -52,48 +58,51 @@ public class PrintFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("printFrame"); // NOI18N
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
-        jButton1.setText("jButton1");
+        mainPanel.setPreferredSize(new java.awt.Dimension(300, 300));
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(350, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(219, 219, 219))
+            .addGap(0, 300, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(211, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(123, 123, 123))
+            .addGap(0, 357, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        System.out.println("frameSize = " + this.getSize());
+        System.out.println("panelSize = " + mainPanel.getSize());
+    }//GEN-LAST:event_formComponentResized
+
     private JPanel panel[];
     private final LinkedList<ActiveOrders> printOrders;
+    private int mainPanelHeight;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel mainPanel;
     // End of variables declaration//GEN-END:variables
 }
