@@ -3,14 +3,17 @@ package impulsexchangeserver;
 import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
+import javax.swing.Timer;
 import static jdk.nashorn.internal.objects.NativeError.printStackTrace;
 
 public class MainFrame extends javax.swing.JFrame {
@@ -18,15 +21,15 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame(Options options) {
         this.options = options;
         this.departmentsList = options.getDepartmentsList();
-        
 
         initComponents();
         exchangePanel.setLayout(new GridLayout(0, 5, 7, 7));
         setLocationRelativeTo(null);
         initPanelComponents();
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
-        
+
         activeOrders = new ActiveOrders[departmentsList.size()];
+        createTimer();
     }
 
     private void initPanelComponents() {
@@ -91,8 +94,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         exchangePanel = new javax.swing.JPanel();
         mainDownloadBtn = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        doPrintBtn = new javax.swing.JButton();
+        exitBtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         optionsCallMenuBtn = new javax.swing.JMenuItem();
@@ -126,19 +129,20 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton1.setText("Список загруженных заказов");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        doPrintBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        doPrintBtn.setText("Список загруженных заказов");
+        doPrintBtn.setEnabled(false);
+        doPrintBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                doPrintBtnActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton2.setText("Завершить обмен");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        exitBtn.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        exitBtn.setText("Выйти без сохранения");
+        exitBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                exitBtnActionPerformed(evt);
             }
         });
 
@@ -177,15 +181,15 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(51, 51, 51)
                         .addComponent(mainDownloadBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(doPrintBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(51, 51, 51))
                     .addComponent(exchangePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(5, 5, 5))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2, mainDownloadBtn});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {doPrintBtn, exitBtn, mainDownloadBtn});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,18 +198,21 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(exchangePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jButton1)
+                    .addComponent(doPrintBtn)
                     .addComponent(mainDownloadBtn)
-                    .addComponent(jButton2))
+                    .addComponent(exitBtn))
                 .addGap(5, 5, 5))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButton1, jButton2, mainDownloadBtn});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {doPrintBtn, exitBtn, mainDownloadBtn});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
+        counter = 0;
+        doPrintBtn.setEnabled(false);
+        timer.start();
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
                 activeOrders[i] = new ActiveOrders();
@@ -215,7 +222,7 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (Exception ex) {
             printStackTrace(ex);
         }
-        
+
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
     private void optionsCallMenuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsCallMenuBtnActionPerformed
@@ -223,25 +230,44 @@ public class MainFrame extends javax.swing.JFrame {
         optionsFrame.setVisible(true);
     }//GEN-LAST:event_optionsCallMenuBtnActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitBtnActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        LinkedList <ActiveOrders> printOrders = new LinkedList();
+    private void doPrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doPrintBtnActionPerformed
+        LinkedList<ActiveOrders> printOrders = new LinkedList();
         for (ActiveOrders activeOrder : activeOrders) {
             if (activeOrder.isUdpated() == true) {
                 printOrders.add(activeOrder);
             }
         }
-        
+
         PrintFrame pr = new PrintFrame(printOrders);
         pr.setVisible(true);
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+
+    }//GEN-LAST:event_doPrintBtnActionPerformed
+
+    private void createTimer() {
+        timer = new Timer(100, (ActionEvent e) -> {
+            counter = 0;
+            for (int i = 0; i < departmentsList.size(); i++) {
+                if (progressBar[i].getValue() == 100) {
+                    counter++;
+                }
+            }
+            if (counter == departmentsList.size()) {
+                counter = 0;
+                doPrintBtn.setEnabled(true);
+                timer.stop();
+                //JOptionPane.showMessageDialog(null, "Загрузка завершена!");
+            }
+        });
+    }
 
     private final Options options;
     private final DefaultListModel<String> departmentsList;
+    private Timer timer;
+    private int counter;
 
     private JLabel[] depNumLabel;
     private JProgressBar[] progressBar;
@@ -249,11 +275,11 @@ public class MainFrame extends javax.swing.JFrame {
     private JButton[] detailsBtn;
     private JToggleButton[] toExchangeBtn;
     private final ActiveOrders activeOrders[];
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton doPrintBtn;
     private javax.swing.JPanel exchangePanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton exitBtn;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
