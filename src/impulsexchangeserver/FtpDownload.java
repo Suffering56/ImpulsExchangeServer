@@ -35,23 +35,21 @@ public class FtpDownload extends Thread {
             progressBar.setValue(0);
             boolean onUpdate = downloadDetails();
 
-            if (onUpdate == true) {
-                downloadFile();
+            if (onUpdate == true) {                                             //Если информация активного отдела была обновлена, то ...
+                downloadFile();                                                 //... загружаем swnd5.arc
                 progressBar.setValue(100);
-                activeOrders.setUdpated(true);
                 activeOrders.setDetailsList(detailsList);
                 progressBar.setString("Загружено");
                 toExchangeBtn.setEnabled(true);
             } else {                                                            //если нет новых данныхх
                 progressBar.setValue(100);
-                activeOrders.setUdpated(false);                                 //помечаем данный отдел, как необновленный
                 progressBar.setString("Нет новых данных");
                 toExchangeBtn.setEnabled(false);
             }
 
         } catch (MalformedURLException ex) {
             JOptionPane.showMessageDialog(null, "Отдел №" + department + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
-            progressBar.setValue(100);        //Возможно стоит ставить 0 вместо 100, для отладки
+            progressBar.setValue(100);                                           //Возможно стоит ставить 0 вместо 100, для отладки
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
 
@@ -88,7 +86,7 @@ public class FtpDownload extends Thread {
             extractDetails(in);
             in.close();
             return true;
-        } else {        //Файл info.txt пуст --> отсутствует информация обмена
+        } else {                                 //Файл info.txt пуст --> отсутствует информация обмена
             return false;
         }
     }

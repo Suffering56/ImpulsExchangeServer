@@ -26,11 +26,11 @@ public class MainFrame extends javax.swing.JFrame {
         initPanelComponents();
         
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
-        setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
     }
 
     private void initPanelComponents() {
-        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));
+        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));         //Устанавливаем компоновку (rows, cols, отступы...)
         
         progressBar = new JProgressBar[departmentsList.size()];
         depNumLabel = new JLabel[departmentsList.size()];
@@ -59,7 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
                 try {
                     this.openDirActionPerformed(evt);
                 } catch (IOException ex) {
-                    System.out.println("ex " + ex);
+                    JOptionPane.showMessageDialog(null, "Ошибка: " + ex);
                 }
             });
             openDirBtn[i].setFocusPainted(false);
@@ -74,9 +74,9 @@ public class MainFrame extends javax.swing.JFrame {
         toExchangeBtn[i].setSelected(!toExchangeBtn[i].isSelected());
         try {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            if (!toExchangeBtn[i].isSelected()) {
-                toExchangeBtn[i].setSelected(true);
-                doPrintDepartments.add(activeDepartment[i]);
+            if (!toExchangeBtn[i].isSelected()) {                      //Если - это первое нажатие на кнопку, то...
+                toExchangeBtn[i].setSelected(true);                    //... зажимаем кнопку ...
+                printList.add(activeDepartment[i]);                    //... и добавляем заказы в printList
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex);
@@ -210,7 +210,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         activeDepartment = new ActiveDepartment[departmentsList.size()];
-        doPrintDepartments.clear();                                                  //Обнуляем заказы на печать
+        printList.clear();                                                  //Обнуляем заказы на печать
 
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
@@ -234,7 +234,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void doPrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doPrintBtnActionPerformed
-        PrintFrame printFrame = new PrintFrame(doPrintDepartments);
+        PrintFrame printFrame = new PrintFrame(printList);
         printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
 
@@ -251,7 +251,7 @@ public class MainFrame extends javax.swing.JFrame {
     private JButton[] openDirBtn;
 
     private ActiveDepartment activeDepartment[];
-    private final LinkedList<ActiveDepartment> doPrintDepartments = new LinkedList();
+    private final LinkedList<ActiveDepartment> printList = new LinkedList();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton doPrintBtn;

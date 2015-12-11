@@ -2,8 +2,6 @@ package impulsexchangeserver;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JComponent;
-import javax.swing.JTextArea;
 import javax.swing.Timer;
 
 public class DetailsFrame extends javax.swing.JFrame {

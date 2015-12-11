@@ -20,15 +20,6 @@ public class ActiveDepartment {
         this.departmentNumber = departmentNumber;
     }
 
-    public boolean isUdpated() {
-        return udpated;
-    }
-
-    public void setUdpated(boolean udpated) {
-        this.udpated = udpated;
-    }
-
-    private boolean udpated = false;
     private String departmentNumber;
     private LinkedList<String> detailsList;
 }
