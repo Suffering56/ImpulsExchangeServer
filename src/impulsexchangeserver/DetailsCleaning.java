@@ -64,5 +64,5 @@ public class DetailsCleaning extends Thread {
 //        }
 //    }
 
-    private final LinkedList <ActiveOrders> printOrders;
+    private final LinkedList <ActiveDepartment> printOrders;
 }

@@ -13,14 +13,17 @@ import java.net.URLConnection;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.JToggleButton;
 
 public class FtpDownload extends Thread {
 
-    public FtpDownload(Options options, JProgressBar progressBar, ActiveOrders activeOrders) throws IOException {
+    public FtpDownload(Options options, JProgressBar progressBar,
+            JToggleButton toExchangeBtn, ActiveDepartment activeOrders) throws IOException {
         this.options = options;
         this.progressBar = progressBar;
+        this.toExchangeBtn = toExchangeBtn;
         this.activeOrders = activeOrders;
-        
+
         department = activeOrders.getDepartmentNumber();
         downloadPath = new File(options.getDownloadPath() + "\\" + department + "\\" + options.getExchangeFileName());
     }
@@ -38,16 +41,19 @@ public class FtpDownload extends Thread {
                 activeOrders.setUdpated(true);
                 activeOrders.setDetailsList(detailsList);
                 progressBar.setString("Загружено");
+                toExchangeBtn.setEnabled(true);
             } else {                                                            //если нет новых данныхх
-                progressBar.setValue(100);  
+                progressBar.setValue(100);
                 activeOrders.setUdpated(false);                                 //помечаем данный отдел, как необновленный
                 progressBar.setString("Нет новых данных");
+                toExchangeBtn.setEnabled(false);
             }
 
         } catch (MalformedURLException ex) {
             JOptionPane.showMessageDialog(null, "Отдел №" + department + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
-            progressBar.setValue(0);
+            progressBar.setValue(100);        //Возможно стоит ставить 0 вместо 100, для отладки
             progressBar.setString("Ошибка");
+            toExchangeBtn.setEnabled(false);
 
         } catch (InterruptedException | IOException ex) {
             String errorMsg;
@@ -66,8 +72,9 @@ public class FtpDownload extends Thread {
                 errorMsg = "Другая ошибка.";
             }
             JOptionPane.showMessageDialog(null, "Отдел №" + department + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
-            progressBar.setValue(0);
+            progressBar.setValue(100);        //Возможно стоит ставить 0 вместо 100, для отладки
             progressBar.setString("Ошибка");
+            toExchangeBtn.setEnabled(false);
         }
     }
 
@@ -122,11 +129,12 @@ public class FtpDownload extends Thread {
         getFileInputStream.close();
         localFileOutputStream.close();
     }
-    
+
     private LinkedList<String> detailsList;
     private final Options options;
     private final JProgressBar progressBar;
+    private final JToggleButton toExchangeBtn;
     private final File downloadPath;
     private final String department;
-    private final ActiveOrders activeOrders;
+    private final ActiveDepartment activeOrders;
 }

@@ -5,13 +5,15 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
-import javax.swing.Timer;
 import static jdk.nashorn.internal.objects.NativeError.printStackTrace;
 
 public class MainFrame extends javax.swing.JFrame {
@@ -19,22 +21,20 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame(Options options) {
         this.options = options;
         this.departmentsList = options.getDepartmentsList();
-
+        
         initComponents();
-        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));
-        setLocationRelativeTo(null);
         initPanelComponents();
+        
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
-
-        activeOrders = new ActiveOrders[departmentsList.size()];
-        createTimer();
+        setLocationRelativeTo(null);
     }
 
     private void initPanelComponents() {
+        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));
+        
         progressBar = new JProgressBar[departmentsList.size()];
         depNumLabel = new JLabel[departmentsList.size()];
         toExchangeBtn = new JToggleButton[departmentsList.size()];
-        detailsBtn = new JButton[departmentsList.size()];
         openDirBtn = new JButton[departmentsList.size()];
 
         for (int i = 0; i < departmentsList.size(); i++) {
@@ -47,19 +47,14 @@ public class MainFrame extends javax.swing.JFrame {
             exchangePanel.add(depNumLabel[i]);
 
             toExchangeBtn[i] = new JToggleButton("На обмен");
-            toExchangeBtn[i].setActionCommand("toExchangeBtn_" + departmentsList.get(i));
-            toExchangeBtn[i].addActionListener(this::btnsActionPerformed);
+            toExchangeBtn[i].setActionCommand(String.valueOf(i));
+            toExchangeBtn[i].addActionListener(this::toExchangeBtnActionPerformed);
             toExchangeBtn[i].setFocusPainted(false);
+            toExchangeBtn[i].setEnabled(false);
             exchangePanel.add(toExchangeBtn[i]);
 
-//            detailsBtn[i] = new JButton("Детали");
-//            detailsBtn[i].setActionCommand("detailsBtn_" + departmentsList.get(i));
-//            detailsBtn[i].addActionListener(this::detailsBtnActionPerformed);
-//            detailsBtn[i].setFocusPainted(false);
-//            exchangePanel.add(detailsBtn[i]);
-
             openDirBtn[i] = new JButton("...");
-            openDirBtn[i].setActionCommand("openDirBtn_" + departmentsList.get(i));
+            openDirBtn[i].setActionCommand(departmentsList.get(i));
             openDirBtn[i].addActionListener((evt) -> {
                 try {
                     this.openDirActionPerformed(evt);
@@ -72,18 +67,26 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
 
-    private void btnsActionPerformed(ActionEvent evt) {
+    private void toExchangeBtnActionPerformed(ActionEvent evt) {
+        int i = Integer.valueOf(evt.getActionCommand());
+        File source = new File(options.getDownloadPath() + "\\" + departmentsList.get(i) + "\\" + options.getExchangeFileName());
+        File destination = new File(options.getExchangePath() + "\\" + options.getExchangeFileName());
+        toExchangeBtn[i].setSelected(!toExchangeBtn[i].isSelected());
+        try {
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if (!toExchangeBtn[i].isSelected()) {
+                toExchangeBtn[i].setSelected(true);
+                doPrintDepartments.add(activeDepartment[i]);
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+            toExchangeBtn[i].setSelected(false);
+        }
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
-        Desktop.getDesktop().open(new File("C:\\windows"));
-    }
-
-    private void detailsBtnActionPerformed(ActionEvent evt) {
-        System.out.println("evt = " + evt.paramString());
-        DetailsFrame detailsFrame = new DetailsFrame();
-        detailsFrame.setLocationRelativeTo(this);
-        detailsFrame.setVisible(true);
+        Desktop.getDesktop().open(new File( //Открываем папку соответствующего отдела (кнопка "...")
+                options.getDownloadPath() + "\\" + evt.getActionCommand()));
     }
 
     @SuppressWarnings("unchecked")
@@ -102,7 +105,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(900, 280));
+        setPreferredSize(new java.awt.Dimension(584, 280));
         setResizable(false);
 
         exchangePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -119,8 +122,11 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         mainDownloadBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        mainDownloadBtn.setText("Загрузить информацию обмена");
+        mainDownloadBtn.setText("Загрузить данные");
         mainDownloadBtn.setFocusPainted(false);
+        mainDownloadBtn.setMaximumSize(new java.awt.Dimension(161, 23));
+        mainDownloadBtn.setMinimumSize(new java.awt.Dimension(161, 23));
+        mainDownloadBtn.setPreferredSize(new java.awt.Dimension(170, 23));
         mainDownloadBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mainDownloadBtnActionPerformed(evt);
@@ -128,16 +134,17 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         doPrintBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        doPrintBtn.setText("Список загруженных заказов");
-        doPrintBtn.setEnabled(false);
+        doPrintBtn.setText("На печать");
         doPrintBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 doPrintBtnActionPerformed(evt);
             }
         });
 
-        exitBtn.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         exitBtn.setText("Выйти без сохранения");
+        exitBtn.setMaximumSize(new java.awt.Dimension(161, 23));
+        exitBtn.setMinimumSize(new java.awt.Dimension(161, 23));
+        exitBtn.setPreferredSize(new java.awt.Dimension(170, 23));
         exitBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitBtnActionPerformed(evt);
@@ -173,21 +180,15 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(51, 51, 51)
-                        .addComponent(mainDownloadBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(doPrintBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(51, 51, 51))
-                    .addComponent(exchangePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(5, 5, 5))
+                .addComponent(mainDownloadBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addComponent(doPrintBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(exchangePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {doPrintBtn, exitBtn, mainDownloadBtn});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {exitBtn, mainDownloadBtn});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,8 +198,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(doPrintBtn)
-                    .addComponent(mainDownloadBtn)
-                    .addComponent(exitBtn))
+                    .addComponent(mainDownloadBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5))
         );
 
@@ -208,19 +209,19 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
-        counter = 0;
-        doPrintBtn.setEnabled(false);
-        timer.start();
+        activeDepartment = new ActiveDepartment[departmentsList.size()];
+        doPrintDepartments.clear();                                                  //Обнуляем заказы на печать
+
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
-                activeOrders[i] = new ActiveOrders();
-                activeOrders[i].setDepartmentNumber(departmentsList.get(i));
-                new FtpDownload(options, progressBar[i], activeOrders[i]).start(); //Запуск дополнительных потоков для отправки файла на FTP
+                activeDepartment[i] = new ActiveDepartment();
+                activeDepartment[i].setDepartmentNumber(departmentsList.get(i));
+                new FtpDownload(options, progressBar[i],
+                        toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
             printStackTrace(ex);
         }
-
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
     private void optionsCallMenuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsCallMenuBtnActionPerformed
@@ -233,44 +234,24 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void doPrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doPrintBtnActionPerformed
-        LinkedList<ActiveOrders> printOrders = new LinkedList();
-        for (ActiveOrders activeOrder : activeOrders) {
-            if (activeOrder.isUdpated() == true) {
-                printOrders.add(activeOrder);
-            }
-        }
-        PrintFrame pr = new PrintFrame(printOrders);
-        pr.setVisible(true);
-
+        PrintFrame printFrame = new PrintFrame(doPrintDepartments);
+        printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
 
-    private void createTimer() {
-        timer = new Timer(100, (ActionEvent e) -> {
-            counter = 0;
-            for (int i = 0; i < departmentsList.size(); i++) {
-                if (progressBar[i].getValue() == 100) {
-                    counter++;
-                }
-            }
-            if (counter == departmentsList.size()) {
-                counter = 0;
-                doPrintBtn.setEnabled(true);
-                timer.stop();
-            }
-        });
-    }
-
+//    private void createTimer() {
+//        timer = new Timer(100, (ActionEvent e) -> {
+//        });
+//    }
     private final Options options;
     private final DefaultListModel<String> departmentsList;
-    private Timer timer;
-    private int counter;
 
-    private JLabel[] depNumLabel;
     private JProgressBar[] progressBar;
-    private JButton[] openDirBtn;
-    private JButton[] detailsBtn;
+    private JLabel[] depNumLabel;
     private JToggleButton[] toExchangeBtn;
-    private final ActiveOrders activeOrders[];
+    private JButton[] openDirBtn;
+
+    private ActiveDepartment activeDepartment[];
+    private final LinkedList<ActiveDepartment> doPrintDepartments = new LinkedList();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton doPrintBtn;

@@ -150,7 +150,7 @@ public class PrintFrame extends javax.swing.JFrame {
 //        System.out.println("panelSize = " + globalPanel.getSize());
     }//GEN-LAST:event_formComponentResized
 
-    private final LinkedList<ActiveOrders> printOrders;
+    private final LinkedList<ActiveDepartment> printOrders;
     private static final int CHBX_HEIGHT = 23;
     private static final int ELEMENT_PADDING = 3;
 

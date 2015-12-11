@@ -2,7 +2,7 @@ package impulsexchangeserver;
 
 import java.util.LinkedList;
 
-public class ActiveOrders {
+public class ActiveDepartment {
 
     public LinkedList<String> getDetailsList() {
         return detailsList;
