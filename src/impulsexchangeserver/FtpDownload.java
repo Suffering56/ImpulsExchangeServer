@@ -18,13 +18,13 @@ import javax.swing.JToggleButton;
 public class FtpDownload extends Thread {
 
     public FtpDownload(Options options, JProgressBar progressBar,
-            JToggleButton toExchangeBtn, ActiveDepartment activeOrders) throws IOException {
+            JToggleButton toExchangeBtn, ActiveDepartment activeDepartment) throws IOException {
         this.options = options;
         this.progressBar = progressBar;
         this.toExchangeBtn = toExchangeBtn;
-        this.activeOrders = activeOrders;
+        this.activeDepartment = activeDepartment;
 
-        department = activeOrders.getDepartmentNumber();
+        department = activeDepartment.getDepartmentNumber();
         downloadPath = new File(options.getDownloadPath() + "\\" + department + "\\" + options.getExchangeFileName());
     }
 
@@ -40,7 +40,7 @@ public class FtpDownload extends Thread {
             if (onUpdate == true) {                                             //Если информация активного отдела была обновлена, то ...
                 downloadFile();                                                 //... загружаем swnd5.arc
                 progressBar.setValue(100);
-                activeOrders.setDetailsList(detailsList);
+                activeDepartment.setDetailsList(detailsList);
                 progressBar.setString("Загружено");
                 toExchangeBtn.setEnabled(true);
             } else {                                                            //если нет новых данныхх
@@ -136,5 +136,5 @@ public class FtpDownload extends Thread {
     private final JToggleButton toExchangeBtn;
     private final File downloadPath;
     private final String department;
-    private final ActiveDepartment activeOrders;
+    private final ActiveDepartment activeDepartment;
 }

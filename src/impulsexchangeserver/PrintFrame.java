@@ -10,56 +10,55 @@ import javax.swing.JScrollPane;
 
 public class PrintFrame extends javax.swing.JFrame {
 
-    public PrintFrame(LinkedList printOrders) {
-        this.printOrders = printOrders;
+    public PrintFrame(LinkedList printList) {
+        this.printList = printList;
 
         initComponents();
         setLocationRelativeTo(null);
 
         globalPanel.setLayout(null);
-        
+
 //        scrollPane = new JScrollPane();
 //        scrollPane.setViewportView(globalPanel);
 //        
 //        this.add(scrollPane);
-        
         initPanelComponents();
     }
 
     private void initPanelComponents() {
-        departmentBoxList = new LinkedList<>();
-        headerCBox = new JCheckBox[printOrders.size()];
+        singleBoxList = new LinkedList<>();
+        headerBox = new JCheckBox[printList.size()];
 
         int yGlobal = 0;            //Начальная y-координата localPanel
         int yLocal;
         JPanel localPanel;
 
-        for (int i = 0; i < printOrders.size(); i++) {
+        for (int i = 0; i < printList.size(); i++) {
             localPanel = new JPanel();
             localPanel.setLayout(null);
             localPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
             yLocal = ELEMENT_PADDING;
-            headerCBox[i] = new JCheckBox(printOrders.get(i).getDepartmentNumber());
-            headerCBox[i].setSize(85, CHBX_HEIGHT);
-            headerCBox[i].setLocation(5, yLocal);
-            headerCBox[i].setActionCommand(String.valueOf(i));
-            headerCBox[i].addActionListener(this::headerCBoxActionPerformed);
+            headerBox[i] = new JCheckBox(printList.get(i).getDepartmentNumber());
+            headerBox[i].setSize(85, CHBX_HEIGHT);
+            headerBox[i].setLocation(5, yLocal);
+            headerBox[i].setActionCommand(String.valueOf(i));
+            headerBox[i].addActionListener(this::headerBoxActionPerformed);
             yLocal = yLocal + CHBX_HEIGHT + ELEMENT_PADDING;
-            localPanel.add(headerCBox[i]);
+            localPanel.add(headerBox[i]);
 
-            orderCBox = new JCheckBox[printOrders.get(i).getDetailsList().size()];
-            for (int j = 0; j < printOrders.get(i).getDetailsList().size(); j++) {
+            singleBox = new JCheckBox[printList.get(i).getDetailsList().size()];
+            for (int j = 0; j < printList.get(i).getDetailsList().size(); j++) {
 
-                orderCBox[j] = new JCheckBox(printOrders.get(i).getDetailsList().get(j));
-                orderCBox[j].setSize(85, CHBX_HEIGHT);
-                orderCBox[j].setLocation(25, yLocal);
-                orderCBox[j].setActionCommand("checkBox_" + printOrders.get(i).getDetailsList().get(j));
-                orderCBox[j].addActionListener(this::cbxActionPerformed);
+                singleBox[j] = new JCheckBox(printList.get(i).getDetailsList().get(j));
+                singleBox[j].setSize(85, CHBX_HEIGHT);
+                singleBox[j].setLocation(25, yLocal);
+                singleBox[j].setActionCommand("checkBox_" + printList.get(i).getDetailsList().get(j));
+                singleBox[j].addActionListener(this::singleBoxActionPerformed);
                 yLocal = yLocal + CHBX_HEIGHT + ELEMENT_PADDING;
-                localPanel.add(orderCBox[j]);
+                localPanel.add(singleBox[j]);
             }
-            departmentBoxList.add(orderCBox);
+            singleBoxList.add(singleBox);
 
             localPanel.setSize(290, yLocal);
             localPanel.setLocation(0, yGlobal);
@@ -84,29 +83,31 @@ public class PrintFrame extends javax.swing.JFrame {
         this.repaint();
     }
 
-    private void headerCBoxActionPerformed(ActionEvent evt) {
+    private void headerBoxActionPerformed(ActionEvent evt) {
         int i = Integer.valueOf(evt.getActionCommand());
 
-        for (int j = 0; j < departmentBoxList.get(i).length; j++) {
-            JCheckBox[] tempCBox = departmentBoxList.get(i);
-            if (tempCBox[j].isSelected() != headerCBox[i].isSelected()) {
-                tempCBox[j].setSelected(!tempCBox[j].isSelected());
+        for (int j = 0; j < singleBoxList.get(i).length; j++) {
+            JCheckBox[] tempSingleBox = singleBoxList.get(i);
+            if (tempSingleBox[j].isSelected() != headerBox[i].isSelected()) {   // Задаем соответствие главного checkBox - дочерним
+                tempSingleBox[j].setSelected(!tempSingleBox[j].isSelected());
             }
         }
         System.out.println("clicked = " + evt.getActionCommand());
-        System.out.println("headerBox = " + headerCBox[i].isSelected());
+        System.out.println("headerBox = " + headerBox[i].isSelected());
     }
-    
 
-    private void cbxActionPerformed(ActionEvent evt) {
+    private void singleBoxActionPerformed(ActionEvent evt) {
         System.out.println("clicked = " + evt.getActionCommand());
     }
-    
+
     private void exitBtnActionPerformed(ActionEvent evt) {
         this.dispose();
     }
-    
+
     private void completeBtnActionPerformed(ActionEvent evt) {
+//        new DetailsCleaning(cleaningList.get(Integer.valueOf(evt.getActionCommand())), "partial").start();
+//        new DetailsCleaning(cleaningList.get(Integer.valueOf(evt.getActionCommand())), "total").start();
+        
         this.dispose();
     }
 
@@ -157,15 +158,16 @@ public class PrintFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_formComponentResized
 
-    private final LinkedList<ActiveDepartment> printOrders;
+    private final LinkedList<ActiveDepartment> printList;
+    private final LinkedList<ActiveDepartment> cleaningList = new LinkedList();
     private static final int CHBX_HEIGHT = 23;
     private static final int ELEMENT_PADDING = 3;
 
-    private JCheckBox[] orderCBox;
-    private JCheckBox[] headerCBox;
-    private LinkedList<JCheckBox[]> departmentBoxList;
+    private JCheckBox[] singleBox;
+    private JCheckBox[] headerBox;
+    private LinkedList<JCheckBox[]> singleBoxList;
     private JButton completeBtn, exitBtn;
-    
+
     private JScrollPane scrollPane;
 
     private int cbxTotal;

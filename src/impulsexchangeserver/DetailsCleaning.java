@@ -3,13 +3,16 @@ package impulsexchangeserver;
 import java.util.LinkedList;
 
 public class DetailsCleaning extends Thread {
-    public DetailsCleaning(LinkedList printOrders) {
-        this.printOrders = printOrders;
+
+    public DetailsCleaning(ActiveDepartment activeDepartment, String status) {
+        this.status = status;
+        this.activeDepartment = activeDepartment;
+        this.department = activeDepartment.getDepartmentNumber();
+        this.cleaningList = activeDepartment.getDetailsList();
     }
 //    this.options  = options;
-//    this.progressBar  = progressBar;    
-//    this.activeOrders  = activeOrders;
-//    department  = activeOrders.getDepartmentNumber();
+
+    
 //    downloadPath  = new File(options.getDownloadPath() + "\\" + department + "\\" + options.getExchangeFileName());
 
     @Override
@@ -17,10 +20,8 @@ public class DetailsCleaning extends Thread {
 //        try {
 
 //            boolean onUpdate = downloadDetails();
-        
 //        } catch (MalformedURLException ex) {
 //            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
-
 //        } catch (InterruptedException | IOException ex) {
 //            String errorMsg;
 //            if (ex.toString().contains("FileNotFoundException")) {
@@ -40,7 +41,7 @@ public class DetailsCleaning extends Thread {
 //            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
 //        }
     }
-    
+
 //        private boolean downloadDetails() throws MalformedURLException, IOException {
 //        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
 //                + ":/" + department + "/info.txt");
@@ -63,6 +64,9 @@ public class DetailsCleaning extends Thread {
 //            detailsList.add(line);
 //        }
 //    }
-
-    private final LinkedList <ActiveDepartment> printOrders;
+    
+    private final ActiveDepartment activeDepartment;
+    private final String status;
+    private final LinkedList<String> cleaningList;
+    private final String department;
 }
