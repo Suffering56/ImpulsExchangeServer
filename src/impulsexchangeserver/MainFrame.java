@@ -3,14 +3,12 @@ package impulsexchangeserver;
 import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
 import javax.swing.Timer;
@@ -23,7 +21,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.departmentsList = options.getDepartmentsList();
 
         initComponents();
-        exchangePanel.setLayout(new GridLayout(0, 5, 7, 7));
+        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));
         setLocationRelativeTo(null);
         initPanelComponents();
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
@@ -54,11 +52,11 @@ public class MainFrame extends javax.swing.JFrame {
             toExchangeBtn[i].setFocusPainted(false);
             exchangePanel.add(toExchangeBtn[i]);
 
-            detailsBtn[i] = new JButton("Детали");
-            detailsBtn[i].setActionCommand("detailsBtn_" + departmentsList.get(i));
-            detailsBtn[i].addActionListener(this::detailsBtnActionPerformed);
-            detailsBtn[i].setFocusPainted(false);
-            exchangePanel.add(detailsBtn[i]);
+//            detailsBtn[i] = new JButton("Детали");
+//            detailsBtn[i].setActionCommand("detailsBtn_" + departmentsList.get(i));
+//            detailsBtn[i].addActionListener(this::detailsBtnActionPerformed);
+//            detailsBtn[i].setFocusPainted(false);
+//            exchangePanel.add(detailsBtn[i]);
 
             openDirBtn[i] = new JButton("...");
             openDirBtn[i].setActionCommand("openDirBtn_" + departmentsList.get(i));
@@ -241,7 +239,6 @@ public class MainFrame extends javax.swing.JFrame {
                 printOrders.add(activeOrder);
             }
         }
-
         PrintFrame pr = new PrintFrame(printOrders);
         pr.setVisible(true);
 
@@ -259,7 +256,6 @@ public class MainFrame extends javax.swing.JFrame {
                 counter = 0;
                 doPrintBtn.setEnabled(true);
                 timer.stop();
-                //JOptionPane.showMessageDialog(null, "Загрузка завершена!");
             }
         });
     }
