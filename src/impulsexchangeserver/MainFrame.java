@@ -21,17 +21,17 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame(Options options) {
         this.options = options;
         this.departmentsList = options.getDepartmentsList();
-        
+
         initComponents();
         initPanelComponents();
-        
+
         this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
         this.setLocationRelativeTo(null);
     }
 
     private void initPanelComponents() {
         exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));         //Устанавливаем компоновку (rows, cols, отступы...)
-        
+
         progressBar = new JProgressBar[departmentsList.size()];
         depNumLabel = new JLabel[departmentsList.size()];
         toExchangeBtn = new JToggleButton[departmentsList.size()];
@@ -85,7 +85,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
-        Desktop.getDesktop().open(new File( //Открываем папку соответствующего отдела (кнопка "...")
+        Desktop.getDesktop().open(new File(                             //Открываем папку соответствующего отдела (кнопка "...")
                 options.getDownloadPath() + "\\" + evt.getActionCommand()));
     }
 
@@ -238,20 +238,15 @@ public class MainFrame extends javax.swing.JFrame {
         printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
 
-//    private void createTimer() {
-//        timer = new Timer(100, (ActionEvent e) -> {
-//        });
-//    }
     private final Options options;
     private final DefaultListModel<String> departmentsList;
+    private final LinkedList<ActiveDepartment> printList = new LinkedList();
+    private ActiveDepartment activeDepartment[];
 
     private JProgressBar[] progressBar;
     private JLabel[] depNumLabel;
     private JToggleButton[] toExchangeBtn;
     private JButton[] openDirBtn;
-
-    private ActiveDepartment activeDepartment[];
-    private final LinkedList<ActiveDepartment> printList = new LinkedList();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton doPrintBtn;

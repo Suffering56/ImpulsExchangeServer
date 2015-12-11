@@ -9,6 +9,7 @@ public class ImpulsExchangeServer {
         options.getOptions();                       //чтение настроек из реестра 
         MainFrame mainFrame = new MainFrame(options);
         mainFrame.setVisible(true);
-       
+//        DetailsFrame df = new DetailsFrame();
+//        df.setVisible(true);
     }
 }

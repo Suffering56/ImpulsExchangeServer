@@ -33,6 +33,8 @@ public class FtpDownload extends Thread {
         try {
             progressBar.setString(null);
             progressBar.setValue(0);
+            toExchangeBtn.setEnabled(false);
+            toExchangeBtn.setSelected(false);
             boolean onUpdate = downloadDetails();
 
             if (onUpdate == true) {                                             //Если информация активного отдела была обновлена, то ...

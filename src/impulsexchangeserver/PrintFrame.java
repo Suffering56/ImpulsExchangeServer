@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class PrintFrame extends javax.swing.JFrame {
 
@@ -16,6 +17,12 @@ public class PrintFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
         globalPanel.setLayout(null);
+        
+//        scrollPane = new JScrollPane();
+//        scrollPane.setViewportView(globalPanel);
+//        
+//        this.add(scrollPane);
+        
         initPanelComponents();
     }
 
@@ -73,6 +80,7 @@ public class PrintFrame extends javax.swing.JFrame {
         globalPanel.add(completeBtn);
 
         this.setSize(this.getSize().width, yGlobal + 39 + 28 - ELEMENT_PADDING);
+        //scrollPane.setSize(this.getSize().width, yGlobal + 39 + 28 - ELEMENT_PADDING - 200);
         this.repaint();
     }
 
@@ -146,8 +154,7 @@ public class PrintFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-//        System.out.println("frameSize = " + this.getSize());
-//        System.out.println("panelSize = " + globalPanel.getSize());
+
     }//GEN-LAST:event_formComponentResized
 
     private final LinkedList<ActiveDepartment> printOrders;
@@ -158,6 +165,8 @@ public class PrintFrame extends javax.swing.JFrame {
     private JCheckBox[] headerCBox;
     private LinkedList<JCheckBox[]> departmentBoxList;
     private JButton completeBtn, exitBtn;
+    
+    private JScrollPane scrollPane;
 
     private int cbxTotal;
     private int cbxCounter;
