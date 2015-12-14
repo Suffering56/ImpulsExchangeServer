@@ -3,16 +3,21 @@ package impulsexchangeserver;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class PrintFrame extends javax.swing.JFrame {
 
-    public PrintFrame(LinkedList printList) {
+    public PrintFrame(Options options, LinkedList printList) {
+        this.options = options;
         this.printList = printList;
 
+        residualListInit();         //residualList.addAll(printList);
         initComponents();
         setLocationRelativeTo(null);
 
@@ -20,9 +25,16 @@ public class PrintFrame extends javax.swing.JFrame {
 
 //        scrollPane = new JScrollPane();
 //        scrollPane.setViewportView(globalPanel);
-//        
 //        this.add(scrollPane);
         initPanelComponents();
+    }
+
+    private void residualListInit() {
+        for (int i = 0; i < printList.size(); i++) {
+            residualList.add(new ActiveDepartment());
+            residualList.getLast().setDepartmentNumber(printList.get(i).getDepartmentNumber());
+            residualList.getLast().getDetailsList().addAll(printList.get(i).getDetailsList());
+        }
     }
 
     private void initPanelComponents() {
@@ -53,7 +65,7 @@ public class PrintFrame extends javax.swing.JFrame {
                 singleBox[j] = new JCheckBox(printList.get(i).getDetailsList().get(j));
                 singleBox[j].setSize(85, CHBX_HEIGHT);
                 singleBox[j].setLocation(25, yLocal);
-                singleBox[j].setActionCommand("checkBox_" + printList.get(i).getDetailsList().get(j));
+                singleBox[j].setActionCommand(String.valueOf(i) + "_" + String.valueOf(j) + "_" + String.valueOf(printList.get(i).getDetailsList().get(j)));
                 singleBox[j].addActionListener(this::singleBoxActionPerformed);
                 yLocal = yLocal + CHBX_HEIGHT + ELEMENT_PADDING;
                 localPanel.add(singleBox[j]);
@@ -85,19 +97,44 @@ public class PrintFrame extends javax.swing.JFrame {
 
     private void headerBoxActionPerformed(ActionEvent evt) {
         int i = Integer.valueOf(evt.getActionCommand());
+        JCheckBox[] tempSingleBoxList = singleBoxList.get(i);
 
-        for (int j = 0; j < singleBoxList.get(i).length; j++) {
-            JCheckBox[] tempSingleBox = singleBoxList.get(i);
-            if (tempSingleBox[j].isSelected() != headerBox[i].isSelected()) {   // Задаем соответствие главного checkBox - дочерним
-                tempSingleBox[j].setSelected(!tempSingleBox[j].isSelected());
+        for (int j = 0; j < tempSingleBoxList.length; j++) {                            //Выделяем (или наоборот) дочерние singleBox так, чтобы...
+            if (tempSingleBoxList[j].isSelected() != headerBox[i].isSelected()) {       //... их значение соответствовало родительскому headerBox
+                tempSingleBoxList[j].setSelected(!tempSingleBoxList[j].isSelected());
             }
         }
-        System.out.println("clicked = " + evt.getActionCommand());
-        System.out.println("headerBox = " + headerBox[i].isSelected());
+
+        if (headerBox[i].isSelected()) {
+            residualList.get(i).getDetailsList().clear();                                   //Очищаем residualList если выбраны все заказы
+        } else {
+            residualList.get(i).getDetailsList().clear();
+            residualList.get(i).getDetailsList().addAll(printList.get(i).getDetailsList()); //Добавляем все заказы в residualList если выбраны все заказы
+        }
     }
 
     private void singleBoxActionPerformed(ActionEvent evt) {
-        System.out.println("clicked = " + evt.getActionCommand());
+        Pattern p = Pattern.compile("(\\d+)_(\\d+)_(\\d+/\\d+)");
+        Matcher m = p.matcher(evt.getActionCommand());
+        if (m.matches()) {
+            int i = Integer.valueOf(m.group(1));
+            int j = Integer.valueOf(m.group(2));
+            String order = m.group(3);
+            JCheckBox[] tempSingleBox = singleBoxList.get(i);
+
+            if (tempSingleBox[j].isSelected()) {
+                residualList.get(i).getDetailsList().remove(order);
+            } else {
+                int index = j + 1 - (singleBoxList.get(i).length
+                        - residualList.get(i).getDetailsList().size());    //    это, чтобы элемент ...
+                if (index < 0) {                                             //... после восстановления вставал на свое место ...
+                    index = 0;                                               //... а это защита от IndexBoundException
+                }
+                residualList.get(i).getDetailsList().add(index, order);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "no matches");
+        }
     }
 
     private void exitBtnActionPerformed(ActionEvent evt) {
@@ -105,9 +142,21 @@ public class PrintFrame extends javax.swing.JFrame {
     }
 
     private void completeBtnActionPerformed(ActionEvent evt) {
-//        new DetailsCleaning(cleaningList.get(Integer.valueOf(evt.getActionCommand())), "partial").start();
-//        new DetailsCleaning(cleaningList.get(Integer.valueOf(evt.getActionCommand())), "total").start();
+//        System.out.println("=============НАЧАЛО================");
+//        for (int i = 0; i < residualList.size(); i++) {
+//            System.out.println("Department = " + residualList.get(i).getDepartmentNumber());
+//            for (int j = 0; j < residualList.get(i).getDetailsList().size(); j++) {
+//                System.out.println("Order: " + residualList.get(i).getDetailsList().get(j));
+//            }
+//        }
+//        System.out.println("===============КОНЕЦ==============");
+        printList.clear();
+        printList.addAll(residualList);
         
+        for (int i = 0; i < residualList.size(); i++) {
+            new DetailsCleaning(options, residualList.get(i))
+                    .start();
+        }
         this.dispose();
     }
 
@@ -158,8 +207,9 @@ public class PrintFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_formComponentResized
 
+    private final Options options;
     private final LinkedList<ActiveDepartment> printList;
-    private final LinkedList<ActiveDepartment> cleaningList = new LinkedList();
+    private final LinkedList<ActiveDepartment> residualList = new LinkedList();
     private static final int CHBX_HEIGHT = 23;
     private static final int ELEMENT_PADDING = 3;
 
@@ -169,9 +219,6 @@ public class PrintFrame extends javax.swing.JFrame {
     private JButton completeBtn, exitBtn;
 
     private JScrollPane scrollPane;
-
-    private int cbxTotal;
-    private int cbxCounter;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel globalPanel;

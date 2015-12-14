@@ -85,7 +85,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
-        Desktop.getDesktop().open(new File(                             //Открываем папку соответствующего отдела (кнопка "...")
+        Desktop.getDesktop().open(new File( //Открываем папку соответствующего отдела (кнопка "...")
                 options.getDownloadPath() + "\\" + evt.getActionCommand()));
     }
 
@@ -234,7 +234,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void doPrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doPrintBtnActionPerformed
-        PrintFrame printFrame = new PrintFrame(printList);
+        PrintFrame printFrame = new PrintFrame(options, printList);
         printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
 

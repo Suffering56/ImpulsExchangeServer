@@ -4,6 +4,10 @@ import java.util.LinkedList;
 
 public class ActiveDepartment {
 
+    public ActiveDepartment() {
+        detailsList = new LinkedList<>();
+    }
+
     public LinkedList<String> getDetailsList() {
         return detailsList;
     }
