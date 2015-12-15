@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
-import static jdk.nashorn.internal.objects.NativeError.printStackTrace;
 
 public class MainFrame extends javax.swing.JFrame {
 
@@ -141,7 +140,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        exitBtn.setText("Выйти без сохранения");
+        exitBtn.setText("Выход");
         exitBtn.setMaximumSize(new java.awt.Dimension(161, 23));
         exitBtn.setMinimumSize(new java.awt.Dimension(161, 23));
         exitBtn.setPreferredSize(new java.awt.Dimension(170, 23));
@@ -184,8 +183,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addComponent(doPrintBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(exchangePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)
+                .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(exchangePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {exitBtn, mainDownloadBtn});
@@ -199,7 +198,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(doPrintBtn)
                     .addComponent(mainDownloadBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5))
         );
 
@@ -220,7 +219,7 @@ public class MainFrame extends javax.swing.JFrame {
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
-            printStackTrace(ex);
+            JOptionPane.showMessageDialog(null, ex);
         }
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 

@@ -71,9 +71,9 @@
               <EmptySpace pref="14" max="32767" attributes="0"/>
               <Component id="doPrintBtn" min="-2" pref="217" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="exitBtn" linkSize="5" min="-2" max="-2" attributes="0"/>
+              <Component id="exitBtn" linkSize="5" min="-2" pref="161" max="-2" attributes="0"/>
           </Group>
-          <Component id="exchangePanel" pref="581" max="32767" attributes="0"/>
+          <Component id="exchangePanel" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -85,7 +85,7 @@
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="doPrintBtn" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="mainDownloadBtn" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="exitBtn" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="exitBtn" linkSize="2" alignment="2" min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
           </Group>
@@ -149,7 +149,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="exitBtn">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#x412;&#x44b;&#x439;&#x442;&#x438; &#x431;&#x435;&#x437; &#x441;&#x43e;&#x445;&#x440;&#x430;&#x43d;&#x435;&#x43d;&#x438;&#x44f;"/>
+        <Property name="text" type="java.lang.String" value="&#x412;&#x44b;&#x445;&#x43e;&#x434;"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[161, 23]"/>
         </Property>

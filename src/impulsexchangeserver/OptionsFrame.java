@@ -2,6 +2,8 @@ package impulsexchangeserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
@@ -21,6 +23,7 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         this.tempDepartmentsList = getListClone(options.getDepartmentsList());  //получаем копию списка отделов
         departmentsList.setModel(tempDepartmentsList);
+        newDepartmentsList.clear();
 
         exchangePathField.setText(options.getExchangePath());
         exchangePathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -387,6 +390,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         try {
             options.setOptions();
             if (switcher) {
+                for (int i = 0; i < newDepartmentsList.size(); i++) {
+                    File directory = new File(options.getDownloadPath() + "\\" + newDepartmentsList.get(i));
+                    Files.createDirectory(directory.toPath());
+                }
                 JOptionPane.showMessageDialog(null, "Был изменен список отделов.\nЧтобы изменения вступили в силу, пожалуйста перезапустите программу.");
             }
         } catch (IOException ex) {
@@ -413,6 +420,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         if (m.matches()) {
             if (!tempDepartmentsList.contains(newDep)) {
                 tempDepartmentsList.addElement(newDep);
+                newDepartmentsList.add(newDep);
                 switcher = true;
             } else {
                 JOptionPane.showMessageDialog(null, "Отдел №" + newDep + " уже есть в списке!");
@@ -426,6 +434,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private void removeDepartmentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDepartmentBtnActionPerformed
         if (departmentsList.getSelectedIndex() != -1) {                              //Если заказ выбран
             tempDepartmentsList.remove(departmentsList.getSelectedIndex());          //Удалить из списка
+            newDepartmentsList.remove(departmentsList.getSelectedIndex());
             switcher = true;
         }
     }//GEN-LAST:event_removeDepartmentBtnActionPerformed
@@ -435,6 +444,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private final Pattern p = Pattern.compile("\\d+");
     private final JFileChooser exchangePathChooser = new JFileChooser();
     private final JFileChooser downloadPathChooser = new JFileChooser();
+    private final LinkedList <String> newDepartmentsList = new LinkedList();
     private boolean switcher = false;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
