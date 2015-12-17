@@ -80,7 +80,7 @@ public class FtpDownload extends Thread {
 
     private boolean downloadDetails() throws MalformedURLException, IOException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + department + "/info.txt");
+                + ":/" + department + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
 
         if (urlConnection.getContentLength() != 0) {
@@ -88,7 +88,7 @@ public class FtpDownload extends Thread {
             extractDetails(in);
             in.close();
             return true;
-        } else {                                 //Файл info.txt пуст --> отсутствует информация обмена
+        } else {                                 //Файл orders.txt пуст --> отсутствует информация обмена
             return false;
         }
     }

@@ -24,6 +24,6 @@ public class ActiveDepartment {
         this.departmentNumber = departmentNumber;
     }
 
-    private String departmentNumber;
-    private LinkedList<String> detailsList;
+    private String departmentNumber;            //Номер отдела
+    private LinkedList <String> detailsList;    //Список заказов
 }

@@ -45,22 +45,18 @@ public class DetailsCleaning extends Thread {
 
     private void updateDetails() throws MalformedURLException, IOException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + department + "/info.txt");
+                + ":/" + department + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
-
         BufferedOutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-        if (activeDepartment.getDetailsList().isEmpty()) {
-            System.out.println("Отдел №" + department + ": Очищаем info.txt");
-            out.write(("")
-                    .getBytes());
-        } else {
-            System.out.println("Отдел №" + department + ": Заменяем info.txt");
-            System.out.println("Оставшиеся заказы:");
+        
+        if (activeDepartment.getDetailsList().isEmpty()) {                          //Если residualList (список оставшихся заказов) пустой...
+            out.write(("")                                                          //... (т.е. были отмечены на удаление ВСЕ заказы текущего отдела)...
+                    .getBytes());                                                   //... то удаляем все заказы из orders.txt
+        } else {                                                                    //... ИНАЧЕ (если были отмечены НЕ ВСЕ заказы)...
             for (int i = 0; i < activeDepartment.getDetailsList().size(); i++) {
-                System.out.println(activeDepartment.getDetailsList().get(i));
-            out.write((activeDepartment.getDetailsList().get(i) + "\r\n")
-                    .getBytes());
-            }
+                out.write((activeDepartment.getDetailsList().get(i) + "\r\n")       //... очищаем orders.txt (не в этой строке - оно само)
+                        .getBytes());                                               //... записываем ОСТАВШИЕСЯ заказы в orders.txt
+            }                                                                       
         }
         out.close();
     }
