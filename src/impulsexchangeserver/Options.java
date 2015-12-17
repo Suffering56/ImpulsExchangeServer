@@ -14,7 +14,8 @@ public class Options {
         this.departmentsList = new DefaultListModel();
     }
 
-    public void getOptions() throws IOException {                                       //получение настроек из реестра
+    public boolean getOptions() throws IOException {                               //Чтение настроек реестра
+
         String optionsReadQuery[] = {ftpAddressReadQuery, ftpLoginReadQuery, ftpPasswordReadQuery, departmentsListReadQuery,
             exchangePathReadQuery, exchangeFileNameReadQuery, downloadPathReadQuery};   //инициализация запросов к реестру
         LinkedList<String> optionsList = new LinkedList();
@@ -22,12 +23,13 @@ public class Options {
 
         for (String query : optionsReadQuery) {
             Process process = Runtime.getRuntime().exec(query);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));    //чтение данных реестра
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));           //Чтение ключей/значений реестра
             String line;
             String parseLine = "";
 
             while ((line = reader.readLine()) != null) {
-                if (line.contains("REG_SZ")) {             //извлечение нужной строки потока реестра
+                if (line.contains("REG_SZ")) {             //Извлечение нужной строки потока реестра
                     parseLine = line.trim();               //PS: там почему-то не в одной строке все хранится
                 }
             }
@@ -36,18 +38,20 @@ public class Options {
 
             Matcher m = p.matcher(parseLine);
             if (m.matches()) {
-                optionsList.add(m.group(1));               //извлечение нужного значения ключа реестра
-            } else {                                       //либо если ключ(значение) отсутствует (не соответствует шаблону)...
-                optionsList.add("");                       //...извлечение пустого значения (для избежания ошибки)             
+                optionsList.add(m.group(1));               //Извлечение нужного значения ключа реестра...
+            } else {                                       //... либо если ключ(значение) отсутствует (не соответствует шаблону)...
+                optionsList.add("");                       //... извлечение пустого значения (для избежания ошибки)             
                 nullOptionsCounter++;
             }
         }
 
         if (nullOptionsCounter == 7) {
-            firstStart();                                  //загрузка значений по-умолчанию при первом запуске программы
+            firstStart();                                  //Загрузка значений по-умолчанию при первом запуске программы
             setOptions();
+            return true;
         } else {
-            importOptionsIntoProgramm(optionsList);        //запись извлеченных параметров в класс Options
+            importOptionsIntoProgramm(optionsList);        //Запись извлеченных параметров в класс Options
+            return false;
         }
     }
 
@@ -70,7 +74,7 @@ public class Options {
         downloadPath = optionsList.get(6);
     }
 
-    private DefaultListModel strToList(String str) {
+    private DefaultListModel strToList(String str) {    //Преобразование строки типа: "100_122_73_74..." в список отделов.
         DefaultListModel list = new DefaultListModel();
         String tempStr = "";
         char[] ch = str.toCharArray();
@@ -78,7 +82,7 @@ public class Options {
             if (ch[i] != '_') {
                 tempStr = tempStr + ch[i];
             } else {
-                if (!tempStr.isEmpty()) {           //если список отделов пуст
+                if (!tempStr.isEmpty()) {
                     list.addElement(tempStr);
                 }
                 tempStr = "";
@@ -87,7 +91,7 @@ public class Options {
         return list;
     }
 
-    private String listToStr(DefaultListModel list) {
+    private String listToStr(DefaultListModel list) {   //Преобразование списка отделов в строку типа: "100_122_73_74..."
         String str = "";
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
@@ -116,7 +120,7 @@ public class Options {
             Process process = Runtime.getRuntime().exec(query);
             while (process.isAlive()) {
             }
-            process.destroy();                  //!!!!!!!!!Добавить в клиентскую версию
+            process.destroy();
         }
     }
 
@@ -144,11 +148,11 @@ public class Options {
         this.ftpAddress = ftpAddress;
     }
 
-    public DefaultListModel <String> getDepartmentsList() {
+    public DefaultListModel<String> getDepartmentsList() {
         return departmentsList;
     }
 
-    public void setDepartmentsList(DefaultListModel <String> departmentsList) {
+    public void setDepartmentsList(DefaultListModel<String> departmentsList) {
         this.departmentsList = departmentsList;
     }
 
@@ -179,7 +183,7 @@ public class Options {
     private String ftpLogin;
     private String ftpPass;
     private String ftpAddress;
-    private DefaultListModel <String> departmentsList;
+    private DefaultListModel<String> departmentsList;
     private String exchangePath;
     private String exchangeFileName;
     private String downloadPath;

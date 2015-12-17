@@ -2,7 +2,6 @@ package impulsexchangeserver;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -13,7 +12,6 @@ public class DetailsCleaning extends Thread {
     public DetailsCleaning(Options options, ActiveDepartment activeDepartment) {
         this.options = options;
         this.activeDepartment = activeDepartment;
-
         department = activeDepartment.getDepartmentNumber();
     }
 
@@ -31,7 +29,7 @@ public class DetailsCleaning extends Thread {
                 errorMsg = "Ошибка соединения с интернетом.";
             } else if (ex.toString().contains("FtpProtocolException")) {
                 errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + department + " на FTP-сервере"
-                        + "\r\nЛибо отсутствует файл деталей обмена (details.txt)";                     //
+                        + "\r\nЛибо отсутствует файл деталей обмена (orders.txt)";
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
             } else if (ex.toString().contains("UnknownHostException")) {

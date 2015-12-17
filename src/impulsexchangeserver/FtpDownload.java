@@ -88,7 +88,7 @@ public class FtpDownload extends Thread {
             extractDetails(in);
             in.close();
             return true;
-        } else {                                 //Файл orders.txt пуст --> отсутствует информация обмена
+        } else {                                 //Файл orders.txt пуст --> Нет новых данных
             return false;
         }
     }

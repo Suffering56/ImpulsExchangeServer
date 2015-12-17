@@ -58,7 +58,7 @@ public class MainFrame extends javax.swing.JFrame {
                 try {
                     this.openDirActionPerformed(evt);
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Ошибка: " + ex);
+                    JOptionPane.showMessageDialog(null, "Ошибка: " + ex);       //#Для отладки#
                 }
             });
             openDirBtn[i].setFocusPainted(false);
@@ -73,19 +73,19 @@ public class MainFrame extends javax.swing.JFrame {
         toExchangeBtn[i].setSelected(!toExchangeBtn[i].isSelected());
         try {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            if (!toExchangeBtn[i].isSelected()) {                      //Если - это первое нажатие на кнопку, то...
-                toExchangeBtn[i].setSelected(true);                    //... зажимаем кнопку ...
-                printList.add(activeDepartment[i]);                    //... и добавляем заказы в printList
+            if (!toExchangeBtn[i].isSelected()) {                               //Если - это первое нажатие на кнопку, то...
+                toExchangeBtn[i].setSelected(true);                             //... зажимаем кнопку ...
+                printList.add(activeDepartment[i]);                             //... и добавляем заказы в printList
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex);
+            JOptionPane.showMessageDialog(null, ex);                            //#Для отладки#
             toExchangeBtn[i].setSelected(false);
         }
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
-        Desktop.getDesktop().open(new File( //Открываем папку соответствующего отдела (кнопка "...")
-                options.getDownloadPath() + "\\" + evt.getActionCommand()));
+        Desktop.getDesktop().open(new File(         
+                options.getDownloadPath() + "\\" + evt.getActionCommand()));    //Открываем папку соответствующего отдела (кнопка "...")
     }
 
     @SuppressWarnings("unchecked")
@@ -209,7 +209,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         activeDepartment = new ActiveDepartment[departmentsList.size()];
-        printList.clear();                                                  //Обнуляем заказы на печать
+        printList.clear();                                                      //Обнуляем заказы на печать
 
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
@@ -219,7 +219,7 @@ public class MainFrame extends javax.swing.JFrame {
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex);
+            JOptionPane.showMessageDialog(null, ex);                            //#Для отладки#
         }
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
