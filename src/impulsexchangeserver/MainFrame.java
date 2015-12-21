@@ -84,7 +84,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
-        Desktop.getDesktop().open(new File(         
+        Desktop.getDesktop().open(new File(
                 options.getDownloadPath() + "\\" + evt.getActionCommand()));    //Открываем папку соответствующего отдела (кнопка "...")
     }
 
@@ -215,7 +215,7 @@ public class MainFrame extends javax.swing.JFrame {
             for (int i = 0; i < departmentsList.size(); i++) {
                 activeDepartment[i] = new ActiveDepartment();
                 activeDepartment[i].setDepartmentNumber(departmentsList.get(i));
-                new FtpDownload(options, progressBar[i],
+                new FtpDownload(options, progressBar[i], 
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
