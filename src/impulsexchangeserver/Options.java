@@ -11,13 +11,12 @@ import javax.swing.DefaultListModel;
 public class Options {
 
     public Options() throws IOException {
-        this.departmentsList = new DefaultListModel();
     }
 
     public boolean getOptions() throws IOException {                               //Чтение настроек реестра
 
-        String optionsReadQuery[] = {ftpAddressReadQuery, ftpLoginReadQuery, ftpPasswordReadQuery, departmentsListReadQuery,
-            exchangePathReadQuery, exchangeFileNameReadQuery, downloadPathReadQuery};   //инициализация запросов к реестру
+        String optionsReadQuery[] = {ftpAddressReadQuery, ftpLoginReadQuery, ftpPasswordReadQuery, 
+            departmentsListReadQuery, exchangePathReadQuery, exchangeFileNameReadQuery};   //инициализация запросов к реестру
         LinkedList<String> optionsList = new LinkedList();
         int nullOptionsCounter = 0;
 
@@ -45,7 +44,7 @@ public class Options {
             }
         }
 
-        if (nullOptionsCounter == 7) {
+        if (nullOptionsCounter == 6) {
             firstStart();                                  //Загрузка значений по-умолчанию при первом запуске программы
             setOptions();
             return true;
@@ -61,7 +60,6 @@ public class Options {
         ftpPass = "im699000pass";
         exchangePath = "C:\\";
         exchangeFileName = "swnd5.arc";
-        downloadPath = "C:\\DealerDataExchange";
     }
 
     private void importOptionsIntoProgramm(LinkedList<String> optionsList) {
@@ -71,7 +69,6 @@ public class Options {
         departmentsList = strToList(optionsList.get(3));
         exchangePath = optionsList.get(4);
         exchangeFileName = optionsList.get(5);
-        downloadPath = optionsList.get(6);
     }
 
     private DefaultListModel strToList(String str) {    //Преобразование строки типа: "100_122_73_74..." в список отделов.
@@ -111,10 +108,9 @@ public class Options {
         String departmentsListWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v departmentsListString /t REG_SZ /d " + listToStr(departmentsList) + " /f";
         String exchangePathWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v exchangePath /t REG_SZ /d " + exchangePath + " /f";
         String exchangeFileNameWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v exchangeFileName /t REG_SZ /d " + exchangeFileName + " /f";
-        String downloadPathWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v downloadPath /t REG_SZ /d " + downloadPath + " /f";
 
-        String optionsWriteQuery[] = {ftpAddressWriteQuery, ftpLoginWriteQuery, ftpPassWriteQuery, departmentsListWriteQuery,
-            exchangePathWriteQuery, exchangeFileNameWriteQuery, downloadPathWriteQuery}; //инициализация запросов на изменение реестра
+        String optionsWriteQuery[] = {ftpAddressWriteQuery, ftpLoginWriteQuery, ftpPassWriteQuery, 
+            departmentsListWriteQuery, exchangePathWriteQuery, exchangeFileNameWriteQuery}; //инициализация запросов на изменение реестра
 
         for (String query : optionsWriteQuery) {
             Process process = Runtime.getRuntime().exec(query);
@@ -172,21 +168,12 @@ public class Options {
         this.exchangeFileName = exchangeFileName;
     }
 
-    public String getDownloadPath() {
-        return downloadPath;
-    }
-
-    public void setDownloadPath(String downloadPath) {
-        this.downloadPath = downloadPath;
-    }
-
     private String ftpLogin;
     private String ftpPass;
     private String ftpAddress;
-    private DefaultListModel<String> departmentsList;
+    private DefaultListModel<String> departmentsList  = new DefaultListModel();
     private String exchangePath;
     private String exchangeFileName;
-    private String downloadPath;
 
     private final Pattern p = Pattern.compile("\\w+\\p{Space}+REG_SZ\\p{Space}+(.+)");    //Шаблон для извлечения параметра ключа реестра
 
@@ -196,5 +183,4 @@ public class Options {
     private final String departmentsListReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v departmentsListString";
     private final String exchangePathReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangePath";
     private final String exchangeFileNameReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangeFileName";
-    private final String downloadPathReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v downloadPath";
 }

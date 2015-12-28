@@ -16,14 +16,14 @@ public class ActiveDepartment {
         this.detailsList = detailsList;
     }
 
-    public String getDepartmentNumber() {
-        return departmentNumber;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setDepartmentNumber(String departmentNumber) {
-        this.departmentNumber = departmentNumber;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
-    private String departmentNumber;            //Номер отдела
+    private String departmentName;            //Номер отдела
     private LinkedList <String> detailsList;    //Список заказов
 }

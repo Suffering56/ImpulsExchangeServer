@@ -26,9 +26,9 @@ public class DataImport extends Thread {
         this.toExchangeBtn = toExchangeBtn;         //передаем кнопку "на обмен", чтобы передать ей нужное состояние положение по окончанию импорта
         this.activeDepartment = activeDepartment;   //передаем информацию отдела (номер, список заказов)
 
-        departmentNumber = activeDepartment.getDepartmentNumber();
-        downloadPath = new File(options.getDownloadPath() + "\\"
-                + departmentNumber + "\\" + options.getExchangeFileName());     //полный путь к swnd5.arc (включая имя и расширение)
+        departmentName = activeDepartment.getDepartmentName();
+        downloadPath = new File(System.getProperty("user.dir") + "\\"
+                + departmentName + "\\" + options.getExchangeFileName());     //полный путь к swnd5.arc (включая имя и расширение)
     }
 
     @Override
@@ -40,7 +40,7 @@ public class DataImport extends Thread {
             toExchangeBtn.setSelected(false);
 
             ftpDirectoryExistCheck();                                           //проверяем наличие папки "номер_отдела" на FTP сервере
-            localDirectoryExistCheck();
+            DirectoryHandler.checkLocalDirectory(departmentName);
             boolean isUpdate = extractDetails();                                //загружаем информацию о новых заказах
 
             if (isUpdate == true) {                                             //если новые заказы есть:
@@ -67,7 +67,7 @@ public class DataImport extends Thread {
                 errorMsg = "Другая ошибка.";
             }
 
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentNumber + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
         } finally {
@@ -80,16 +80,16 @@ public class DataImport extends Thread {
         ftpClient.connect(options.getFtpAddress());
         ftpClient.login(options.getFtpLogin(), options.getFtpPass());
         ftpClient.enterLocalPassiveMode();
-        boolean exist = ftpClient.changeWorkingDirectory(departmentNumber);
+        boolean exist = ftpClient.changeWorkingDirectory(departmentName);
         if (!exist) {
-            ftpClient.makeDirectory(departmentNumber);
-            ftpClient.changeWorkingDirectory(departmentNumber);
+            ftpClient.makeDirectory(departmentName);
+            ftpClient.changeWorkingDirectory(departmentName);
         }
     }
 
     private void localDirectoryExistCheck() throws IOException {
-        File directory = new File(options.getDownloadPath() + "\\"
-                + departmentNumber); 
+        File directory = new File(System.getProperty("user.dir") + "\\"
+                + departmentName); 
         if (!Files.exists(directory.toPath())) {
             Files.createDirectory(directory.toPath());
         }
@@ -97,7 +97,7 @@ public class DataImport extends Thread {
 
     private boolean extractDetails() throws IOException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + departmentNumber + "/orders.txt");
+                + ":/" + departmentName + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
 
         if (urlConnection.getContentLength() > 0) {
@@ -116,7 +116,7 @@ public class DataImport extends Thread {
 
     private void downloadFile() throws MalformedURLException, IOException, InterruptedException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + departmentNumber + "/" + options.getExchangeFileName());
+                + ":/" + departmentName + "/" + options.getExchangeFileName());
         URLConnection urlConnection = ur.openConnection();
 
         if (urlConnection.getContentLength() > 0) {
@@ -144,7 +144,7 @@ public class DataImport extends Thread {
         } else {
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentNumber + ". Отсутствует файл обмена (swnd5.arc) на FTP-сервере");
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". Отсутствует файл обмена (swnd5.arc) на FTP-сервере");
         }
     }
 
@@ -153,6 +153,6 @@ public class DataImport extends Thread {
     private final JProgressBar progressBar;
     private final JToggleButton toExchangeBtn;
     private final File downloadPath;
-    private final String departmentNumber;
+    private final String departmentName;
     private final ActiveDepartment activeDepartment;
 }

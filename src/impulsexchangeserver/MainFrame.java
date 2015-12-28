@@ -68,7 +68,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void toExchangeBtnActionPerformed(ActionEvent evt) {
         int i = Integer.valueOf(evt.getActionCommand());
-        File source = new File(options.getDownloadPath() + "\\" + departmentsList.get(i) + "\\" + options.getExchangeFileName());
+        File source = new File(System.getProperty("user.dir") + "\\" + departmentsList.get(i) + "\\" + options.getExchangeFileName());
         File destination = new File(options.getExchangePath() + "\\" + options.getExchangeFileName());
         toExchangeBtn[i].setSelected(!toExchangeBtn[i].isSelected());
         try {
@@ -84,8 +84,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void openDirActionPerformed(ActionEvent evt) throws IOException {
+        DirectoryHandler.checkLocalDirectory(evt.getActionCommand());
         Desktop.getDesktop().open(new File(
-                options.getDownloadPath() + "\\" + evt.getActionCommand()));    //Открываем папку соответствующего отдела (кнопка "...")
+                System.getProperty("user.dir") + "\\" + evt.getActionCommand()));    //Открываем папку соответствующего отдела (кнопка "...")
     }
 
     @SuppressWarnings("unchecked")
@@ -214,7 +215,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             for (int i = 0; i < departmentsList.size(); i++) {
                 activeDepartment[i] = new ActiveDepartment();
-                activeDepartment[i].setDepartmentNumber(departmentsList.get(i));
+                activeDepartment[i].setDepartmentName(departmentsList.get(i));
                 new DataImport(options, progressBar[i], 
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }

@@ -44,7 +44,7 @@ public class PrintFrame extends JFrame {
             localPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
 
             int yLocal = ELEMENT_PADDING;
-            headerBox[i] = new JCheckBox(printList.get(i).getDepartmentNumber());       //Добавление HeaderBox ======= Начало
+            headerBox[i] = new JCheckBox(printList.get(i).getDepartmentName());       //Добавление HeaderBox ======= Начало
             headerBox[i].setSize(85, ELEMENT_HEIGHT);
             headerBox[i].setLocation(5, yLocal);
             headerBox[i].setActionCommand(String.valueOf(i));
@@ -111,7 +111,7 @@ public class PrintFrame extends JFrame {
     private void residualListInit() {
         for (int i = 0; i < printList.size(); i++) {
             residualList.add(new ActiveDepartment());
-            residualList.getLast().setDepartmentNumber(printList.get(i).getDepartmentNumber());
+            residualList.getLast().setDepartmentName(printList.get(i).getDepartmentName());
             residualList.getLast().getDetailsList().addAll(printList.get(i).getDetailsList());
         }
     }

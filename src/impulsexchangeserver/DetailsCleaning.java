@@ -12,7 +12,7 @@ public class DetailsCleaning extends Thread {
     public DetailsCleaning(Options options, ActiveDepartment activeDepartment) {
         this.options = options;
         this.activeDepartment = activeDepartment;
-        department = activeDepartment.getDepartmentNumber();
+        departmentName = activeDepartment.getDepartmentName();
     }
 
     @Override
@@ -20,7 +20,7 @@ public class DetailsCleaning extends Thread {
         try {
             updateDetails();
         } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
         } catch (IOException ex) {
             String errorMsg;
             if (ex.toString().contains("FileNotFoundException")) {
@@ -28,7 +28,7 @@ public class DetailsCleaning extends Thread {
             } else if (ex.toString().contains("NoRouteToHostException")) {
                 errorMsg = "Ошибка соединения с интернетом.";
             } else if (ex.toString().contains("FtpProtocolException")) {
-                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + department + " на FTP-сервере"
+                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + departmentName + " на FTP-сервере"
                         + "\r\nЛибо отсутствует файл деталей обмена (orders.txt)";
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
@@ -37,13 +37,13 @@ public class DetailsCleaning extends Thread {
             } else {
                 errorMsg = "Другая ошибка.";
             }
-            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
         }
     }
 
     private void updateDetails() throws MalformedURLException, IOException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + department + "/orders.txt");
+                + ":/" + departmentName + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
         BufferedOutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
         
@@ -61,5 +61,5 @@ public class DetailsCleaning extends Thread {
 
     private final Options options;
     private final ActiveDepartment activeDepartment;
-    private final String department;
+    private final String departmentName;
 }
