@@ -18,8 +18,8 @@ import javax.swing.WindowConstants;
 
 public class PrintFrame extends JFrame {
 
-    public PrintFrame(LinkedList printList) {
-        this.printList = printList;
+    public PrintFrame(LinkedList doPrintList) {
+        this.doPrintList = doPrintList;
 
         residualListInit();
         initPanelComponents();
@@ -34,16 +34,16 @@ public class PrintFrame extends JFrame {
         globalPanel.setLayout(null);
         this.add(globalPanel);
 
-        headerBox = new JCheckBox[printList.size()];                                    //Задаем МАССИВ HeaderBox[количество отделов]
-        int yGlobal = 0;                                                  //Определяяет высоту globalPanel и yLocation globalPanel
+        headerBox = new JCheckBox[doPrintList.size()];                                  //Задаем МАССИВ HeaderBox[количество отделов]
+        int yGlobal = 0;                                                                //Определяяет высоту globalPanel и yLocation globalPanel
 
-        for (int i = 0; i < printList.size(); i++) {
+        for (int i = 0; i < doPrintList.size(); i++) {
             JPanel localPanel = new JPanel();
             localPanel.setLayout(null);
             localPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
 
             int yLocal = ELEMENT_PADDING;
-            headerBox[i] = new JCheckBox(printList.get(i).getDepartmentName());       //Добавление HeaderBox ======= Начало
+            headerBox[i] = new JCheckBox(doPrintList.get(i).getDepartmentName());       //Добавление HeaderBox ======= Начало
             headerBox[i].setSize(85, ELEMENT_HEIGHT);
             headerBox[i].setLocation(5, yLocal);
             headerBox[i].setActionCommand(String.valueOf(i));
@@ -51,12 +51,13 @@ public class PrintFrame extends JFrame {
             yLocal = yLocal + ELEMENT_HEIGHT + ELEMENT_PADDING;
             localPanel.add(headerBox[i]);                                               //Добавление HeaderBox ======= Конец
 
-            singleBox = new JCheckBox[printList.get(i).getOrdersList().size()];        //Добавление SingleBox ======= Начало
-            for (int j = 0; j < printList.get(i).getOrdersList().size(); j++) {
-                singleBox[j] = new JCheckBox(printList.get(i).getOrdersList().get(j));
-                singleBox[j].setSize(85, ELEMENT_HEIGHT);
+            singleBox = new JCheckBox[doPrintList.get(i).getOrdersList().size()];        //Добавление SingleBox ======= Начало
+            for (int j = 0; j < doPrintList.get(i).getOrdersList().size(); j++) {
+                String cleansedOrder = doPrintList.get(i).getOrdersList().get(j);
+                singleBox[j] = new JCheckBox(cleansedOrder);
+                singleBox[j].setSize(260, ELEMENT_HEIGHT);
                 singleBox[j].setLocation(25, yLocal);
-                singleBox[j].setActionCommand(String.valueOf(i) + "_" + String.valueOf(j) + "_" + String.valueOf(printList.get(i).getOrdersList().get(j)));
+                singleBox[j].setActionCommand(String.valueOf(i) + "_" + String.valueOf(j) + "_" + String.valueOf(cleansedOrder));
                 singleBox[j].addActionListener(this::singleBoxActionPerformed);
                 yLocal = yLocal + ELEMENT_HEIGHT + ELEMENT_PADDING;
                 localPanel.add(singleBox[j]);                                           //Добавление SingleBox ======= Конец
@@ -108,10 +109,10 @@ public class PrintFrame extends JFrame {
     }
 
     private void residualListInit() {
-        for (int i = 0; i < printList.size(); i++) {
+        for (int i = 0; i < doPrintList.size(); i++) {
             residualList.add(new ActiveDepartment());
-            residualList.getLast().setDepartmentName(printList.get(i).getDepartmentName());
-            residualList.getLast().getOrdersList().addAll(printList.get(i).getOrdersList());
+            residualList.getLast().setDepartmentName(doPrintList.get(i).getDepartmentName());
+            residualList.getLast().getOrdersList().addAll(doPrintList.get(i).getOrdersList());
         }
     }
 
@@ -129,26 +130,26 @@ public class PrintFrame extends JFrame {
             residualList.get(i).getOrdersList().clear();                                   //Очищаем residualList если стоит галочка в headerBox
         } else {
             residualList.get(i).getOrdersList().clear();
-            residualList.get(i).getOrdersList().addAll(printList.get(i).getOrdersList()); //Добавляем все заказы в residualList галочки НЕТ в headerBox
+            residualList.get(i).getOrdersList().addAll(doPrintList.get(i).getOrdersList()); //Добавляем все заказы в residualList галочки НЕТ в headerBox
         }
     }
 
     private void singleBoxActionPerformed(ActionEvent evt) {
-        Pattern p = Pattern.compile("(\\d+)_(\\d+)_(\\d+/\\d+)");
-        Matcher m = p.matcher(evt.getActionCommand());
+        Pattern pp = Pattern.compile("(\\d+)_(\\d+)_(\\d+/\\d+\\p{Space}+\\d+.\\d+.\\d+\\p{Space}\\d+:\\d+:\\d+)");
+        Matcher m = pp.matcher(evt.getActionCommand());
         if (m.matches()) {
-            int i = Integer.valueOf(m.group(1));
-            int j = Integer.valueOf(m.group(2));
-            String order = m.group(3);
+            int i = Integer.valueOf(m.group(1));            //индекс отдела
+            int j = Integer.valueOf(m.group(2));            //индекс нажатого checkBox-а
+            String order = m.group(3);                      //наименование заказа 
             JCheckBox[] tempSingleBox = singleBoxList.get(i);
 
             if (tempSingleBox[j].isSelected()) {
                 residualList.get(i).getOrdersList().remove(order);
             } else {
                 int index = j + 1 - (singleBoxList.get(i).length
-                        - residualList.get(i).getOrdersList().size());      //    это, чтобы элемент ...
-                if (index < 0) {                                             //... после восстановления вставал на свое место ...
-                    index = 0;                                               //... а это защита от IndexBoundException
+                        - residualList.get(i).getOrdersList().size());          //это, чтобы элемент ...
+                if (index < 0) {                                                //... после восстановления вставал на свое место ...
+                    index = 0;                                                  //... а это защита от IndexBoundException
                 }
                 residualList.get(i).getOrdersList().add(index, order);
             }
@@ -158,8 +159,8 @@ public class PrintFrame extends JFrame {
     }
 
     private void completeBtnActionPerformed(ActionEvent evt) {
-        printList.clear();
-        printList.addAll(residualList);
+        doPrintList.clear();
+        doPrintList.addAll(residualList);
         for (int i = 0; i < residualList.size(); i++) {
             new OrdersCleaning(residualList.get(i))
                     .start();
@@ -182,7 +183,8 @@ public class PrintFrame extends JFrame {
     private static final int ELEMENT_HEIGHT = 23;                                 //Стандартная высота элементов (JButton, JCheckBox)
     private static final int ELEMENT_PADDING = 3;                                 //Стандартный отступ между элементами
     // Объявление остальных переменных
-    private final LinkedList <ActiveDepartment> printList;                        //Список импортированных заказов (загруженных)
-    private final LinkedList <ActiveDepartment> residualList = new LinkedList();  //Список оставшихся заказов (которые нельзя удалять)
-    private final LinkedList <JCheckBox[]> singleBoxList = new LinkedList<>();    //Список МАССИВОВ singleBox[] (замена ДВУМЕРНОМУ массиву)  
+    private final LinkedList<ActiveDepartment> doPrintList;                        //Список импортированных заказов (загруженных)
+    private final LinkedList<ActiveDepartment> residualList = new LinkedList();  //Список оставшихся заказов (которые нельзя удалять)
+    private final LinkedList<JCheckBox[]> singleBoxList = new LinkedList<>();    //Список МАССИВОВ singleBox[] (замена ДВУМЕРНОМУ массиву)  
+    private final Pattern p = Pattern.compile("(\\d+/\\d+)\\p{Space}+(\\d+.\\d+.\\d+)\\p{Space}(\\d+:\\d+:\\d+)");
 }

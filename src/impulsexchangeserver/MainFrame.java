@@ -74,7 +74,7 @@ public class MainFrame extends javax.swing.JFrame {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             if (!toExchangeBtn[i].isSelected()) {                               //Если - это первое нажатие на кнопку, то...
                 toExchangeBtn[i].setSelected(true);                             //... зажимаем кнопку ...
-                printList.add(activeDepartment[i]);                             //... и добавляем заказы в printList
+                doPrintList.add(activeDepartment[i]);                           //... и добавляем заказы в printList
             }
         } catch (IOException ex) {
             toExchangeBtn[i].setSelected(false);
@@ -217,7 +217,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         activeDepartment = new ActiveDepartment[departmentsCount];
-        printList.clear();                                                      //Обнуляем заказы на печать
+        doPrintList.clear();                                                      //Обнуляем заказы на печать
 
         try {
             for (int i = 0; i < departmentsCount; i++) {
@@ -241,7 +241,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void doPrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doPrintBtnActionPerformed
-        PrintFrame printFrame = new PrintFrame(printList);
+        PrintFrame printFrame = new PrintFrame(doPrintList);
         printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
 
@@ -253,7 +253,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final DefaultListModel<String> departmentNameList;
     private final int departmentsCount;
     private ActiveDepartment activeDepartment[];
-    private final LinkedList<ActiveDepartment> printList = new LinkedList();
+    private final LinkedList<ActiveDepartment> doPrintList = new LinkedList();
     private JProgressBar[] progressBar;
     private JLabel[] departmentNameLabel;
     private JToggleButton[] toExchangeBtn;
