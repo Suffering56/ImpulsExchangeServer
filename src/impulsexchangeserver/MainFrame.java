@@ -104,6 +104,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Impuls Exchange Server");
         setPreferredSize(new java.awt.Dimension(584, 280));
         setResizable(false);
 
@@ -134,6 +135,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         doPrintBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         doPrintBtn.setText("На печать");
+        doPrintBtn.setFocusPainted(false);
         doPrintBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 doPrintBtnActionPerformed(evt);
@@ -141,6 +143,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         exitBtn.setText("Выход");
+        exitBtn.setFocusPainted(false);
         exitBtn.setMaximumSize(new java.awt.Dimension(161, 23));
         exitBtn.setMinimumSize(new java.awt.Dimension(161, 23));
         exitBtn.setPreferredSize(new java.awt.Dimension(170, 23));
@@ -168,6 +171,11 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu2.setText("Справка");
 
         jMenuItem3.setText("Вызов справки");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem3);
 
         jMenuBar1.add(jMenu2);
@@ -236,6 +244,11 @@ public class MainFrame extends javax.swing.JFrame {
         PrintFrame printFrame = new PrintFrame(printList);
         printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        HelpFrame helpFrame = new HelpFrame();
+        helpFrame.setVisible(true);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private final DefaultListModel<String> departmentNameList;
     private final int departmentsCount;

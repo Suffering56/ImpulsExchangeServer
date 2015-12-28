@@ -68,6 +68,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         ftpPassField = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Настройки");
         setName("optionsFrame"); // NOI18N
         setResizable(false);
         setType(java.awt.Window.Type.POPUP);
@@ -77,12 +78,15 @@ public class OptionsFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("<html>Список<br>отделов:</html>");
+        jLabel1.setFocusable(false);
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel2.setText("<html>Путь к <br>папке обмена:</html>");
+        jLabel2.setFocusable(false);
 
         jLabel7.setFont(new java.awt.Font("Times New Roman", 0, 21)); // NOI18N
         jLabel7.setText("Локальные настройки");
+        jLabel7.setFocusable(false);
 
         chooseExchangePathBtn.setText(" ...");
         chooseExchangePathBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -92,6 +96,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         });
 
         cancelBtn.setText("Отмена");
+        cancelBtn.setFocusPainted(false);
         cancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelBtnActionPerformed(evt);
@@ -99,6 +104,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         });
 
         saveBtn.setText("Сохранить и выйти");
+        saveBtn.setFocusPainted(false);
         saveBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveBtnActionPerformed(evt);
@@ -116,6 +122,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(departmentsList);
 
         addDepartmentBtn.setText("Добавить отдел");
+        addDepartmentBtn.setFocusPainted(false);
         addDepartmentBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addDepartmentBtnActionPerformed(evt);
@@ -125,8 +132,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Новый отдел:");
+        jLabel3.setFocusable(false);
 
         removeDepartmentBtn.setText("Удалить выделенный отдел");
+        removeDepartmentBtn.setFocusPainted(false);
         removeDepartmentBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeDepartmentBtnActionPerformed(evt);
@@ -135,6 +144,7 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         jLabel10.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel10.setText("<html>Полное имя <br>файла обмена:</html>");
+        jLabel10.setFocusable(false);
 
         exchangeFileNameField.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
 
@@ -226,15 +236,19 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
         jLabel4.setText("IP-адрес:");
+        jLabel4.setFocusable(false);
 
         jLabel5.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
         jLabel5.setText("Логин:");
+        jLabel5.setFocusable(false);
 
         jLabel6.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
         jLabel6.setText("Пароль:");
+        jLabel6.setFocusable(false);
 
         jLabel8.setFont(new java.awt.Font("Times New Roman", 0, 21)); // NOI18N
         jLabel8.setText("Настройки FTP-сервера");
+        jLabel8.setFocusable(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
