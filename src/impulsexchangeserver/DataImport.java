@@ -88,8 +88,10 @@ public class DataImport extends Thread {
     }
 
     private void localDirectoryExistCheck() throws IOException {
-        if (!Files.exists(downloadPath.toPath())) {
-            Files.createDirectory(downloadPath.toPath());
+        File directory = new File(options.getDownloadPath() + "\\"
+                + departmentNumber); 
+        if (!Files.exists(directory.toPath())) {
+            Files.createDirectory(directory.toPath());
         }
     }
 
