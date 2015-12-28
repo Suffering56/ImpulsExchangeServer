@@ -15,17 +15,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
 
-public class FtpDownload extends Thread {
+public class DataImport extends Thread {
 
-    public FtpDownload(Options options, JProgressBar progressBar,
+    public DataImport(Options options, JProgressBar progressBar,
             JToggleButton toExchangeBtn, ActiveDepartment activeDepartment) throws IOException {
-        this.options = options;
-        this.progressBar = progressBar;
-        this.toExchangeBtn = toExchangeBtn;
-        this.activeDepartment = activeDepartment;
+        this.options = options;                     //передаем параметры программы
+        this.progressBar = progressBar;             //передаем активный progressBar - для плавного изменения его состояния в процессе импорта
+        this.toExchangeBtn = toExchangeBtn;         //передаем кнопку "на обмен", чтобы передать ей нужное состояние положение по окончанию импорта
+        this.activeDepartment = activeDepartment;   //передаем информацию отдела (номер, список заказов)
 
-        department = activeDepartment.getDepartmentNumber();
-        downloadPath = new File(options.getDownloadPath() + "\\" + department + "\\" + options.getExchangeFileName());
+        departmentNumber = activeDepartment.getDepartmentNumber();
+        downloadPath = new File(options.getDownloadPath() + "\\"
+                + departmentNumber + "\\" + options.getExchangeFileName());     //полный путь к swnd5.arc (включая имя и расширение)
     }
 
     @Override
@@ -35,23 +36,21 @@ public class FtpDownload extends Thread {
             progressBar.setValue(0);
             toExchangeBtn.setEnabled(false);
             toExchangeBtn.setSelected(false);
-            boolean onUpdate = downloadDetails();
 
-            if (onUpdate == true) {                                             //Если информация активного отдела была обновлена, то ...
-                downloadFile();                                                 //... загружаем swnd5.arc
-                progressBar.setValue(100);
-                activeDepartment.setDetailsList(detailsList);
-                progressBar.setString("Загружено");
+            boolean isUpdate = importDetails();                                 //загружаем информацию о новых заказах
+
+            if (isUpdate == true) {                                             //если новые заказы есть:
+                downloadFile();                                                 //загружаем swnd5.arc
+                activeDepartment.setDetailsList(detailsList);                   //прикрепляем список новых заказов к отделу
                 toExchangeBtn.setEnabled(true);
-            } else {                                                            //если нет новых данныхх
-                progressBar.setValue(100);
+                progressBar.setString("Загружено");
+            } else {                                                            //если нет новых заказов:
+                toExchangeBtn.setEnabled(false);                                //блокируем кнопку "на обмен"
                 progressBar.setString("Нет новых данных");
-                toExchangeBtn.setEnabled(false);
             }
 
         } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
-            progressBar.setValue(100);                                           //Возможно стоит ставить 0 вместо 100, для отладки
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentNumber + ". Другая ошибка.\r\nКод ошибки: " + ex.toString());
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
 
@@ -62,7 +61,7 @@ public class FtpDownload extends Thread {
             } else if (ex.toString().contains("NoRouteToHostException")) {
                 errorMsg = "Ошибка соединения с интернетом.";
             } else if (ex.toString().contains("FtpProtocolException")) {
-                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + department + " на FTP-сервере"
+                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + departmentNumber + " на FTP-сервере"
                         + "\r\nЛибо отсутствует файл деталей обмена (details.txt)";                     //
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
@@ -71,21 +70,27 @@ public class FtpDownload extends Thread {
             } else {
                 errorMsg = "Другая ошибка.";
             }
-            JOptionPane.showMessageDialog(null, "Отдел №" + department + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
-            progressBar.setValue(100);        //Возможно стоит ставить 0 вместо 100, для отладки
+
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentNumber + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
+        } finally {
+            progressBar.setValue(100);
         }
     }
 
-    private boolean downloadDetails() throws MalformedURLException, IOException {
+    private boolean importDetails() throws MalformedURLException, IOException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + department + "/orders.txt");
+                + ":/" + departmentNumber + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
 
         if (urlConnection.getContentLength() != 0) {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            extractDetails(in);
+            String line;
+            detailsList = new LinkedList();
+            while ((line = in.readLine()) != null) {
+                detailsList.add(line);
+            }
             in.close();
             return true;
         } else {                                 //Файл orders.txt пуст --> Нет новых данных
@@ -93,17 +98,9 @@ public class FtpDownload extends Thread {
         }
     }
 
-    private void extractDetails(BufferedReader in) throws IOException {
-        String line;
-        detailsList = new LinkedList();
-        while ((line = in.readLine()) != null) {
-            detailsList.add(line);
-        }
-    }
-
     private void downloadFile() throws MalformedURLException, IOException, InterruptedException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + department + "/" + options.getExchangeFileName());
+                + ":/" + departmentNumber + "/" + options.getExchangeFileName());
         URLConnection urlConnection = ur.openConnection();
 
         BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
@@ -135,6 +132,6 @@ public class FtpDownload extends Thread {
     private final JProgressBar progressBar;
     private final JToggleButton toExchangeBtn;
     private final File downloadPath;
-    private final String department;
+    private final String departmentNumber;
     private final ActiveDepartment activeDepartment;
 }

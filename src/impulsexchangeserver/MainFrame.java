@@ -215,7 +215,7 @@ public class MainFrame extends javax.swing.JFrame {
             for (int i = 0; i < departmentsList.size(); i++) {
                 activeDepartment[i] = new ActiveDepartment();
                 activeDepartment[i].setDepartmentNumber(departmentsList.get(i));
-                new FtpDownload(options, progressBar[i], 
+                new DataImport(options, progressBar[i], 
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
