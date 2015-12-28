@@ -10,10 +10,7 @@ import javax.swing.DefaultListModel;
 
 public class Options {
 
-    public Options() throws IOException {
-    }
-
-    public boolean getOptions() throws IOException {                               //Чтение настроек реестра
+    public static boolean getOptions() throws IOException {                               //Чтение настроек реестра
 
         String optionsReadQuery[] = {ftpAddressReadQuery, ftpLoginReadQuery, ftpPasswordReadQuery, 
             departmentsListReadQuery, exchangePathReadQuery, exchangeFileNameReadQuery};   //инициализация запросов к реестру
@@ -54,7 +51,7 @@ public class Options {
         }
     }
 
-    private void firstStart() {
+    private static void firstStart() {
         ftpAddress = "5.101.156.8";
         ftpLogin = "mailru5o_login";
         ftpPass = "im699000pass";
@@ -62,7 +59,7 @@ public class Options {
         exchangeFileName = "swnd5.arc";
     }
 
-    private void importOptionsIntoProgramm(LinkedList<String> optionsList) {
+    private static void importOptionsIntoProgramm(LinkedList<String> optionsList) {
         ftpAddress = optionsList.get(0);
         ftpLogin = optionsList.get(1);
         ftpPass = optionsList.get(2);
@@ -71,7 +68,7 @@ public class Options {
         exchangeFileName = optionsList.get(5);
     }
 
-    private DefaultListModel strToList(String str) {    //Преобразование строки типа: "100_122_73_74..." в список отделов.
+    private static DefaultListModel strToList(String str) {    //Преобразование строки типа: "100_122_73_74..." в список отделов.
         DefaultListModel list = new DefaultListModel();
         String tempStr = "";
         char[] ch = str.toCharArray();
@@ -88,7 +85,7 @@ public class Options {
         return list;
     }
 
-    private String listToStr(DefaultListModel list) {   //Преобразование списка отделов в строку типа: "100_122_73_74..."
+    private static String listToStr(DefaultListModel list) {   //Преобразование списка отделов в строку типа: "100_122_73_74..."
         String str = "";
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
@@ -101,7 +98,7 @@ public class Options {
         }
     }
 
-    public void setOptions() throws IOException {
+    public static void setOptions() throws IOException {
         String ftpAddressWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpAddress /t REG_SZ /d " + ftpAddress + " /f";
         String ftpLoginWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpLogin /t REG_SZ /d " + ftpLogin + " /f";
         String ftpPassWriteQuery = "REG ADD HKCU\\Software\\ImpulsExchangeServer /v ftpPass /t REG_SZ /d " + ftpPass + " /f";
@@ -120,67 +117,18 @@ public class Options {
         }
     }
 
-    public String getFtpLogin() {
-        return ftpLogin;
-    }
+    public static String ftpLogin;
+    public static String ftpPass;
+    public static String ftpAddress;
+    public static DefaultListModel<String> departmentsList  = new DefaultListModel();
+    public static String exchangePath;
+    public static String exchangeFileName;
 
-    public void setFtpLogin(String ftpLogin) {
-        this.ftpLogin = ftpLogin;
-    }
-
-    public String getFtpPass() {
-        return ftpPass;
-    }
-
-    public void setFtpPass(String ftpPass) {
-        this.ftpPass = ftpPass;
-    }
-
-    public String getFtpAddress() {
-        return ftpAddress;
-    }
-
-    public void setFtpAddress(String ftpAddress) {
-        this.ftpAddress = ftpAddress;
-    }
-
-    public DefaultListModel<String> getDepartmentsList() {
-        return departmentsList;
-    }
-
-    public void setDepartmentsList(DefaultListModel<String> departmentsList) {
-        this.departmentsList = departmentsList;
-    }
-
-    public String getExchangePath() {
-        return exchangePath;
-    }
-
-    public void setExchangePath(String exchangePath) {
-        this.exchangePath = exchangePath;
-    }
-
-    public String getExchangeFileName() {
-        return exchangeFileName;
-    }
-
-    public void setExchangeFileName(String exchangeFileName) {
-        this.exchangeFileName = exchangeFileName;
-    }
-
-    private String ftpLogin;
-    private String ftpPass;
-    private String ftpAddress;
-    private DefaultListModel<String> departmentsList  = new DefaultListModel();
-    private String exchangePath;
-    private String exchangeFileName;
-
-    private final Pattern p = Pattern.compile("\\w+\\p{Space}+REG_SZ\\p{Space}+(.+)");    //Шаблон для извлечения параметра ключа реестра
-
-    private final String ftpAddressReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpAddress";
-    private final String ftpLoginReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpLogin";
-    private final String ftpPasswordReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpPass";
-    private final String departmentsListReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v departmentsListString";
-    private final String exchangePathReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangePath";
-    private final String exchangeFileNameReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangeFileName";
+    private static final Pattern p = Pattern.compile("\\w+\\p{Space}+REG_SZ\\p{Space}+(.+)");    //Шаблон для извлечения параметра ключа реестра
+    private static final String ftpAddressReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpAddress";
+    private static final String ftpLoginReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpLogin";
+    private static final String ftpPasswordReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v ftpPass";
+    private static final String departmentsListReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v departmentsListString";
+    private static final String exchangePathReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangePath";
+    private static final String exchangeFileNameReadQuery = "REG QUERY HKCU\\Software\\ImpulsExchangeServer /v exchangeFileName";
 }

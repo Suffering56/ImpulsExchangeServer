@@ -18,8 +18,7 @@ import javax.swing.WindowConstants;
 
 public class PrintFrame extends JFrame {
 
-    public PrintFrame(Options options, LinkedList printList) {
-        this.options = options;
+    public PrintFrame(LinkedList printList) {
         this.printList = printList;
 
         residualListInit();
@@ -52,12 +51,12 @@ public class PrintFrame extends JFrame {
             yLocal = yLocal + ELEMENT_HEIGHT + ELEMENT_PADDING;
             localPanel.add(headerBox[i]);                                               //Добавление HeaderBox ======= Конец
 
-            singleBox = new JCheckBox[printList.get(i).getDetailsList().size()];        //Добавление SingleBox ======= Начало
-            for (int j = 0; j < printList.get(i).getDetailsList().size(); j++) {
-                singleBox[j] = new JCheckBox(printList.get(i).getDetailsList().get(j));
+            singleBox = new JCheckBox[printList.get(i).getOrdersList().size()];        //Добавление SingleBox ======= Начало
+            for (int j = 0; j < printList.get(i).getOrdersList().size(); j++) {
+                singleBox[j] = new JCheckBox(printList.get(i).getOrdersList().get(j));
                 singleBox[j].setSize(85, ELEMENT_HEIGHT);
                 singleBox[j].setLocation(25, yLocal);
-                singleBox[j].setActionCommand(String.valueOf(i) + "_" + String.valueOf(j) + "_" + String.valueOf(printList.get(i).getDetailsList().get(j)));
+                singleBox[j].setActionCommand(String.valueOf(i) + "_" + String.valueOf(j) + "_" + String.valueOf(printList.get(i).getOrdersList().get(j)));
                 singleBox[j].addActionListener(this::singleBoxActionPerformed);
                 yLocal = yLocal + ELEMENT_HEIGHT + ELEMENT_PADDING;
                 localPanel.add(singleBox[j]);                                           //Добавление SingleBox ======= Конец
@@ -112,7 +111,7 @@ public class PrintFrame extends JFrame {
         for (int i = 0; i < printList.size(); i++) {
             residualList.add(new ActiveDepartment());
             residualList.getLast().setDepartmentName(printList.get(i).getDepartmentName());
-            residualList.getLast().getDetailsList().addAll(printList.get(i).getDetailsList());
+            residualList.getLast().getOrdersList().addAll(printList.get(i).getOrdersList());
         }
     }
 
@@ -127,10 +126,10 @@ public class PrintFrame extends JFrame {
         }
 
         if (headerBox[i].isSelected()) {
-            residualList.get(i).getDetailsList().clear();                                   //Очищаем residualList если стоит галочка в headerBox
+            residualList.get(i).getOrdersList().clear();                                   //Очищаем residualList если стоит галочка в headerBox
         } else {
-            residualList.get(i).getDetailsList().clear();
-            residualList.get(i).getDetailsList().addAll(printList.get(i).getDetailsList()); //Добавляем все заказы в residualList галочки НЕТ в headerBox
+            residualList.get(i).getOrdersList().clear();
+            residualList.get(i).getOrdersList().addAll(printList.get(i).getOrdersList()); //Добавляем все заказы в residualList галочки НЕТ в headerBox
         }
     }
 
@@ -144,14 +143,14 @@ public class PrintFrame extends JFrame {
             JCheckBox[] tempSingleBox = singleBoxList.get(i);
 
             if (tempSingleBox[j].isSelected()) {
-                residualList.get(i).getDetailsList().remove(order);
+                residualList.get(i).getOrdersList().remove(order);
             } else {
                 int index = j + 1 - (singleBoxList.get(i).length
-                        - residualList.get(i).getDetailsList().size());      //    это, чтобы элемент ...
+                        - residualList.get(i).getOrdersList().size());      //    это, чтобы элемент ...
                 if (index < 0) {                                             //... после восстановления вставал на свое место ...
                     index = 0;                                               //... а это защита от IndexBoundException
                 }
-                residualList.get(i).getDetailsList().add(index, order);
+                residualList.get(i).getOrdersList().add(index, order);
             }
         } else {
             JOptionPane.showMessageDialog(null, "Неверный номер заказа");
@@ -162,7 +161,7 @@ public class PrintFrame extends JFrame {
         printList.clear();
         printList.addAll(residualList);
         for (int i = 0; i < residualList.size(); i++) {
-            new DetailsCleaning(options, residualList.get(i))
+            new OrdersCleaning(residualList.get(i))
                     .start();
         }
         this.dispose();
@@ -183,7 +182,6 @@ public class PrintFrame extends JFrame {
     private static final int ELEMENT_HEIGHT = 23;                                 //Стандартная высота элементов (JButton, JCheckBox)
     private static final int ELEMENT_PADDING = 3;                                 //Стандартный отступ между элементами
     // Объявление остальных переменных
-    private final Options options;
     private final LinkedList <ActiveDepartment> printList;                        //Список импортированных заказов (загруженных)
     private final LinkedList <ActiveDepartment> residualList = new LinkedList();  //Список оставшихся заказов (которые нельзя удалять)
     private final LinkedList <JCheckBox[]> singleBoxList = new LinkedList<>();    //Список МАССИВОВ singleBox[] (замена ДВУМЕРНОМУ массиву)  

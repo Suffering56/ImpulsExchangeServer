@@ -10,25 +10,22 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
-import org.apache.commons.net.ftp.FTPClient;
 
 public class DataImport extends Thread {
 
-    public DataImport(Options options, JProgressBar progressBar,
-            JToggleButton toExchangeBtn, ActiveDepartment activeDepartment) throws IOException {
-        this.options = options;                     //передаем параметры программы
+    public DataImport(JProgressBar progressBar, JToggleButton toExchangeBtn,
+            ActiveDepartment activeDepartment) throws IOException {
         this.progressBar = progressBar;             //передаем активный progressBar - для плавного изменения его состояния в процессе импорта
         this.toExchangeBtn = toExchangeBtn;         //передаем кнопку "на обмен", чтобы передать ей нужное состояние положение по окончанию импорта
         this.activeDepartment = activeDepartment;   //передаем информацию отдела (номер, список заказов)
 
         departmentName = activeDepartment.getDepartmentName();
         downloadPath = new File(System.getProperty("user.dir") + "\\"
-                + departmentName + "\\" + options.getExchangeFileName());     //полный путь к swnd5.arc (включая имя и расширение)
+                + departmentName + "\\" + Options.exchangeFileName);     //полный путь к swnd5.arc (включая имя и расширение)
     }
 
     @Override
@@ -39,13 +36,14 @@ public class DataImport extends Thread {
             toExchangeBtn.setEnabled(false);
             toExchangeBtn.setSelected(false);
 
-            ftpDirectoryExistCheck();                                           //проверяем наличие папки "номер_отдела" на FTP сервере
+            DirectoryHandler.checkFtpDirectory(departmentName);                                           //проверяем наличие папки "номер_отдела" на FTP сервере
             DirectoryHandler.checkLocalDirectory(departmentName);
-            boolean isUpdate = extractDetails();                                //загружаем информацию о новых заказах
+            
+            boolean isUpdate = extractOrders();                                //загружаем информацию о новых заказах
 
             if (isUpdate == true) {                                             //если новые заказы есть:
                 downloadFile();                                                 //загружаем swnd5.arc
-                activeDepartment.setDetailsList(detailsList);                   //прикрепляем список новых заказов к отделу
+                activeDepartment.setOrdersList(ordersList);                   //прикрепляем список новых заказов к отделу
                 toExchangeBtn.setEnabled(true);
                 progressBar.setString("Загружено");
             } else {                                                            //если нет новых заказов:
@@ -75,37 +73,17 @@ public class DataImport extends Thread {
         }
     }
 
-    private void ftpDirectoryExistCheck() throws IOException {
-        FTPClient ftpClient = new FTPClient();
-        ftpClient.connect(options.getFtpAddress());
-        ftpClient.login(options.getFtpLogin(), options.getFtpPass());
-        ftpClient.enterLocalPassiveMode();
-        boolean exist = ftpClient.changeWorkingDirectory(departmentName);
-        if (!exist) {
-            ftpClient.makeDirectory(departmentName);
-            ftpClient.changeWorkingDirectory(departmentName);
-        }
-    }
-
-    private void localDirectoryExistCheck() throws IOException {
-        File directory = new File(System.getProperty("user.dir") + "\\"
-                + departmentName); 
-        if (!Files.exists(directory.toPath())) {
-            Files.createDirectory(directory.toPath());
-        }
-    }
-
-    private boolean extractDetails() throws IOException {
-        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
+    private boolean extractOrders() throws IOException {
+        URL ur = new URL("ftp://" + Options.ftpLogin + ":" + Options.ftpPass + "@" + Options.ftpAddress
                 + ":/" + departmentName + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
 
         if (urlConnection.getContentLength() > 0) {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line;
-            detailsList = new LinkedList();
+            ordersList = new LinkedList();
             while ((line = in.readLine()) != null) {
-                detailsList.add(line);
+                ordersList.add(line);
             }
             in.close();
             return true;
@@ -115,8 +93,8 @@ public class DataImport extends Thread {
     }
 
     private void downloadFile() throws MalformedURLException, IOException, InterruptedException {
-        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
-                + ":/" + departmentName + "/" + options.getExchangeFileName());
+        URL ur = new URL("ftp://" + Options.ftpLogin + ":" + Options.ftpPass + "@" + Options.ftpAddress
+                + ":/" + departmentName + "/" + Options.exchangeFileName);
         URLConnection urlConnection = ur.openConnection();
 
         if (urlConnection.getContentLength() > 0) {
@@ -148,8 +126,7 @@ public class DataImport extends Thread {
         }
     }
 
-    private LinkedList<String> detailsList;
-    private final Options options;
+    private LinkedList<String> ordersList;
     private final JProgressBar progressBar;
     private final JToggleButton toExchangeBtn;
     private final File downloadPath;

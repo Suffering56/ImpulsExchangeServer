@@ -17,43 +17,42 @@ import javax.swing.JToggleButton;
 
 public class MainFrame extends javax.swing.JFrame {
 
-    public MainFrame(Options options) {
-        this.options = options;
-        this.departmentsList = options.getDepartmentsList();
-
+    public MainFrame() {
+        departmentNameList = Options.departmentsList;
+        departmentsCount = departmentNameList.size();
         initComponents();
         initPanelComponents();
 
-        this.setSize(this.getWidth(), (26 + 7) * departmentsList.size() + 20 + 65 + 7);
+        this.setSize(this.getWidth(), (26 + 7) * departmentsCount + 20 + 65 + 7);
         this.setLocationRelativeTo(null);
     }
 
     private void initPanelComponents() {
         exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));         //Устанавливаем компоновку (rows, cols, отступы...)
 
-        progressBar = new JProgressBar[departmentsList.size()];
-        depNumLabel = new JLabel[departmentsList.size()];
-        toExchangeBtn = new JToggleButton[departmentsList.size()];
-        openDirBtn = new JButton[departmentsList.size()];
+        progressBar = new JProgressBar[departmentsCount];
+        departmentNameLabel = new JLabel[departmentsCount];
+        toExchangeBtn = new JToggleButton[departmentsCount];
+        openDirBtn = new JButton[departmentsCount];
 
-        for (int i = 0; i < departmentsList.size(); i++) {
+        for (int i = 0; i < departmentsCount; i++) {
             progressBar[i] = new JProgressBar();
             progressBar[i].setStringPainted(true);
             exchangePanel.add(progressBar[i]);
 
-            depNumLabel[i] = new JLabel("Отдел №" + departmentsList.get(i));
-            depNumLabel[i].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            exchangePanel.add(depNumLabel[i]);
+            departmentNameLabel[i] = new JLabel("Отдел №" + departmentNameList.get(i));
+            departmentNameLabel[i].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            exchangePanel.add(departmentNameLabel[i]);
 
             toExchangeBtn[i] = new JToggleButton("На обмен");
-            toExchangeBtn[i].setActionCommand(String.valueOf(i));
+            toExchangeBtn[i].setActionCommand(String.valueOf(i));               //передаем в качестве параметра индекс отдела
             toExchangeBtn[i].addActionListener(this::toExchangeBtnActionPerformed);
             toExchangeBtn[i].setFocusPainted(false);
             toExchangeBtn[i].setEnabled(false);
             exchangePanel.add(toExchangeBtn[i]);
 
             openDirBtn[i] = new JButton("...");
-            openDirBtn[i].setActionCommand(departmentsList.get(i));
+            openDirBtn[i].setActionCommand(departmentNameList.get(i));             //передаем в качестве параметра номер отдела
             openDirBtn[i].addActionListener((evt) -> {
                 try {
                     this.openDirActionPerformed(evt);
@@ -68,8 +67,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void toExchangeBtnActionPerformed(ActionEvent evt) {
         int i = Integer.valueOf(evt.getActionCommand());
-        File source = new File(System.getProperty("user.dir") + "\\" + departmentsList.get(i) + "\\" + options.getExchangeFileName());
-        File destination = new File(options.getExchangePath() + "\\" + options.getExchangeFileName());
+        File source = new File(System.getProperty("user.dir") + "\\" + departmentNameList.get(i) + "\\" + Options.exchangeFileName);
+        File destination = new File(Options.exchangePath + "\\" + Options.exchangeFileName);
         toExchangeBtn[i].setSelected(!toExchangeBtn[i].isSelected());
         try {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -78,8 +77,8 @@ public class MainFrame extends javax.swing.JFrame {
                 printList.add(activeDepartment[i]);                             //... и добавляем заказы в printList
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex);                            //#Для отладки#
             toExchangeBtn[i].setSelected(false);
+            JOptionPane.showMessageDialog(null, ex);                            //#Для отладки#
         }
     }
 
@@ -209,14 +208,14 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
-        activeDepartment = new ActiveDepartment[departmentsList.size()];
+        activeDepartment = new ActiveDepartment[departmentsCount];
         printList.clear();                                                      //Обнуляем заказы на печать
 
         try {
-            for (int i = 0; i < departmentsList.size(); i++) {
+            for (int i = 0; i < departmentsCount; i++) {
                 activeDepartment[i] = new ActiveDepartment();
-                activeDepartment[i].setDepartmentName(departmentsList.get(i));
-                new DataImport(options, progressBar[i], 
+                activeDepartment[i].setDepartmentName(departmentNameList.get(i));
+                new DataImport(progressBar[i],
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
@@ -225,7 +224,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
     private void optionsCallMenuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsCallMenuBtnActionPerformed
-        OptionsFrame optionsFrame = new OptionsFrame(options);
+        OptionsFrame optionsFrame = new OptionsFrame();
         optionsFrame.setVisible(true);
     }//GEN-LAST:event_optionsCallMenuBtnActionPerformed
 
@@ -234,17 +233,16 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void doPrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doPrintBtnActionPerformed
-        PrintFrame printFrame = new PrintFrame(options, printList);
+        PrintFrame printFrame = new PrintFrame(printList);
         printFrame.setVisible(true);
     }//GEN-LAST:event_doPrintBtnActionPerformed
 
-    private final Options options;
-    private final DefaultListModel<String> departmentsList;
-    private final LinkedList<ActiveDepartment> printList = new LinkedList();
+    private final DefaultListModel<String> departmentNameList;
+    private final int departmentsCount;
     private ActiveDepartment activeDepartment[];
-
+    private final LinkedList<ActiveDepartment> printList = new LinkedList();
     private JProgressBar[] progressBar;
-    private JLabel[] depNumLabel;
+    private JLabel[] departmentNameLabel;
     private JToggleButton[] toExchangeBtn;
     private JButton[] openDirBtn;
 

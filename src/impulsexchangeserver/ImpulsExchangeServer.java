@@ -5,9 +5,8 @@ import java.io.IOException;
 public class ImpulsExchangeServer {
 
     public static void main(String[] args) throws IOException {
-        Options options = new Options();
-        options.getOptions();
-        MainFrame mainFrame = new MainFrame(options);
+        Options.getOptions();
+        MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
     }
 }

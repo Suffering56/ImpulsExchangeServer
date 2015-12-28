@@ -10,23 +10,22 @@ import javax.swing.JOptionPane;
 
 public class OptionsFrame extends javax.swing.JFrame {
 
-    public OptionsFrame(Options options) {
+    public OptionsFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        this.options = options;
         
-        ftpAddressField.setText(options.getFtpAddress());
-        ftpLoginField.setText(options.getFtpLogin());
-        ftpPassField.setText(options.getFtpPass());
+        ftpAddressField.setText(Options.ftpAddress);
+        ftpLoginField.setText(Options.ftpLogin);
+        ftpPassField.setText(Options.ftpPass);
 
-        this.tempDepartmentsList = getListClone(options.getDepartmentsList());  //получаем копию списка отделов
+        this.tempDepartmentsList = getListClone(Options.departmentsList);  //получаем копию списка отделов
         departmentsList.setModel(tempDepartmentsList);
 
-        exchangePathField.setText(options.getExchangePath());
+        exchangePathField.setText(Options.exchangePath);
         exchangePathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        exchangePathChooser.setCurrentDirectory(new File(options.getExchangePath()));
+        exchangePathChooser.setCurrentDirectory(new File(exchangePathField.getText()));
         
-        exchangeFileNameField.setText(options.getExchangeFileName());
+        exchangeFileNameField.setText(Options.exchangeFileName);
     }
 
     private DefaultListModel getListClone(DefaultListModel dm) {
@@ -67,12 +66,6 @@ public class OptionsFrame extends javax.swing.JFrame {
         ftpAddressField = new javax.swing.JTextField();
         ftpLoginField = new javax.swing.JTextField();
         ftpPassField = new javax.swing.JPasswordField();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("optionsFrame"); // NOI18N
@@ -86,7 +79,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         jLabel1.setText("<html>Список<br>отделов:</html>");
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jLabel2.setText("<html>Путь к <br>файлу обмена:</html>");
+        jLabel2.setText("<html>Путь к <br>папке обмена:</html>");
 
         jLabel7.setFont(new java.awt.Font("Times New Roman", 0, 21)); // NOI18N
         jLabel7.setText("Локальные настройки");
@@ -181,7 +174,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                                     .addComponent(exchangeFileNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(removeDepartmentBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jScrollPane1});
@@ -207,15 +200,12 @@ public class OptionsFrame extends javax.swing.JFrame {
                             .addComponent(addDepartmentBtn))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(removeDepartmentBtn)
+                        .addGap(7, 7, 7)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(exchangePathField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(chooseExchangePathBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addComponent(jLabel2)))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(exchangePathField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(chooseExchangePathBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -225,7 +215,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(saveBtn)
                     .addComponent(cancelBtn))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addGap(3, 3, 3))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addDepartmentBtn, jLabel3, newDepartmentField, removeDepartmentBtn});
@@ -292,27 +282,8 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(ftpPassField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
-
-        jMenu1.setText("Меню");
-
-        jMenuItem1.setText("Сохранить");
-        jMenu1.add(jMenuItem1);
-
-        jMenuItem2.setText("Закрыть");
-        jMenu1.add(jMenuItem2);
-
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Справка");
-
-        jMenuItem3.setText("Вызов справки");
-        jMenu2.add(jMenuItem3);
-
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -326,7 +297,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -337,17 +308,15 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        options.setFtpAddress(ftpAddressField.getText());
-        options.setFtpLogin(ftpLoginField.getText());
-        options.setFtpPass(ftpPassField.getText());
-
-        options.setDepartmentsList(tempDepartmentsList);
-
-        options.setExchangePath(exchangePathField.getText());
-        options.setExchangeFileName(exchangeFileNameField.getText());
+        Options.ftpAddress = ftpAddressField.getText();
+        Options.ftpLogin = ftpLoginField.getText();
+        Options.ftpPass = ftpPassField.getText();
+        Options.departmentsList = tempDepartmentsList;
+        Options.exchangePath = exchangePathField.getText();
+        Options.exchangeFileName = exchangeFileNameField.getText();
 
         try {
-            options.setOptions();
+            Options.setOptions();
             if (switcher) {
                 JOptionPane.showMessageDialog(null, "Был изменен список отделов.\nЧтобы изменения вступили в силу, пожалуйста перезапустите программу.");
             }
@@ -380,13 +349,12 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_addDepartmentBtnActionPerformed
 
     private void removeDepartmentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDepartmentBtnActionPerformed
-        if (departmentsList.getSelectedIndex() != -1) {                              //Если заказ выбран
+        if (departmentsList.getSelectedIndex() != -1) {                              //Если отдел выбран
             tempDepartmentsList.remove(departmentsList.getSelectedIndex());          //Удалить из списка
             switcher = true;
         }
     }//GEN-LAST:event_removeDepartmentBtnActionPerformed
 
-    private final Options options;
     private final DefaultListModel tempDepartmentsList;
     private final Pattern p = Pattern.compile("\\d+");
     private final JFileChooser exchangePathChooser = new JFileChooser();
@@ -411,12 +379,6 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

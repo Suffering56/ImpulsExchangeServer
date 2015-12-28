@@ -7,10 +7,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.swing.JOptionPane;
 
-public class DetailsCleaning extends Thread {
+public class OrdersCleaning extends Thread {
 
-    public DetailsCleaning(Options options, ActiveDepartment activeDepartment) {
-        this.options = options;
+    public OrdersCleaning(ActiveDepartment activeDepartment) {
         this.activeDepartment = activeDepartment;
         departmentName = activeDepartment.getDepartmentName();
     }
@@ -18,18 +17,15 @@ public class DetailsCleaning extends Thread {
     @Override
     public void run() {
         try {
+            DirectoryHandler.checkFtpDirectory(departmentName);                 //проверяем наличие папки "номер_отдела" на FTP сервере
             updateDetails();
-        } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". Другая ошибка (FTP).\r\nКод ошибки: " + ex.toString());
+            
         } catch (IOException ex) {
             String errorMsg;
             if (ex.toString().contains("FileNotFoundException")) {
                 errorMsg = "Файл обмена отсутствует, либо указан неверный путь.";
             } else if (ex.toString().contains("NoRouteToHostException")) {
                 errorMsg = "Ошибка соединения с интернетом.";
-            } else if (ex.toString().contains("FtpProtocolException")) {
-                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + departmentName + " на FTP-сервере"
-                        + "\r\nЛибо отсутствует файл деталей обмена (orders.txt)";
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
             } else if (ex.toString().contains("UnknownHostException")) {
@@ -42,24 +38,23 @@ public class DetailsCleaning extends Thread {
     }
 
     private void updateDetails() throws MalformedURLException, IOException {
-        URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
+        URL ur = new URL("ftp://" + Options.ftpLogin + ":" + Options.ftpPass + "@" + Options.ftpAddress
                 + ":/" + departmentName + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
         BufferedOutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-        
-        if (activeDepartment.getDetailsList().isEmpty()) {                          //Если residualList (список оставшихся заказов) пустой...
+
+        if (activeDepartment.getOrdersList().isEmpty()) {                          //Если residualList (список оставшихся заказов) пустой...
             out.write(("")                                                          //... (т.е. были отмечены на удаление ВСЕ заказы текущего отдела)...
                     .getBytes());                                                   //... то удаляем все заказы из orders.txt
         } else {                                                                    //... ИНАЧЕ (если были отмечены НЕ ВСЕ заказы)...
-            for (int i = 0; i < activeDepartment.getDetailsList().size(); i++) {
-                out.write((activeDepartment.getDetailsList().get(i) + "\r\n")       //... очищаем orders.txt (не в этой строке - оно само)
+            for (int i = 0; i < activeDepartment.getOrdersList().size(); i++) {
+                out.write((activeDepartment.getOrdersList().get(i) + "\r\n")       //... очищаем orders.txt (не в этой строке - оно само)
                         .getBytes());                                               //... записываем ОСТАВШИЕСЯ заказы в orders.txt
-            }                                                                       
+            }
         }
         out.close();
     }
 
-    private final Options options;
     private final ActiveDepartment activeDepartment;
     private final String departmentName;
 }

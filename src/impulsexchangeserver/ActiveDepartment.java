@@ -4,16 +4,12 @@ import java.util.LinkedList;
 
 public class ActiveDepartment {
 
-    public ActiveDepartment() {
-        detailsList = new LinkedList<>();
+    public LinkedList<String> getOrdersList() {
+        return ordersList;
     }
 
-    public LinkedList<String> getDetailsList() {
-        return detailsList;
-    }
-
-    public void setDetailsList(LinkedList<String> detailsList) {
-        this.detailsList = detailsList;
+    public void setOrdersList(LinkedList<String> ordersList) {
+        this.ordersList = ordersList;
     }
 
     public String getDepartmentName() {
@@ -24,6 +20,6 @@ public class ActiveDepartment {
         this.departmentName = departmentName;
     }
 
-    private String departmentName;            //Номер отдела
-    private LinkedList <String> detailsList;    //Список заказов
+    private String departmentName;                                  //Номер отдела
+    private LinkedList <String> ordersList = new LinkedList<>();   //Список заказов
 }
