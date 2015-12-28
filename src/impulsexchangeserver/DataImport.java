@@ -10,10 +10,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JToggleButton;
+import org.apache.commons.net.ftp.FTPClient;
 
 public class DataImport extends Thread {
 
@@ -37,7 +39,9 @@ public class DataImport extends Thread {
             toExchangeBtn.setEnabled(false);
             toExchangeBtn.setSelected(false);
 
-            boolean isUpdate = importDetails();                                 //загружаем информацию о новых заказах
+            ftpDirectoryExistCheck();                                           //проверяем наличие папки "номер_отдела" на FTP сервере
+            localDirectoryExistCheck();
+            boolean isUpdate = extractDetails();                                //загружаем информацию о новых заказах
 
             if (isUpdate == true) {                                             //если новые заказы есть:
                 downloadFile();                                                 //загружаем swnd5.arc
@@ -49,20 +53,12 @@ public class DataImport extends Thread {
                 progressBar.setString("Нет новых данных");
             }
 
-        } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentNumber + ". Другая ошибка.\r\nКод ошибки: " + ex.toString());
-            progressBar.setString("Ошибка");
-            toExchangeBtn.setEnabled(false);
-
         } catch (InterruptedException | IOException ex) {
             String errorMsg;
             if (ex.toString().contains("FileNotFoundException")) {
                 errorMsg = "Файл обмена отсутствует, либо указан неверный путь.";
             } else if (ex.toString().contains("NoRouteToHostException")) {
                 errorMsg = "Ошибка соединения с интернетом.";
-            } else if (ex.toString().contains("FtpProtocolException")) {
-                errorMsg = "Ошибка FTP. Отсутствует каталог для отдела №" + departmentNumber + " на FTP-сервере"
-                        + "\r\nЛибо отсутствует файл деталей обмена (details.txt)";                     //
             } else if (ex.toString().contains("FtpLoginException")) {
                 errorMsg = "Ошибка доступа к FTP-серверу. Неверный логин или пароль.";
             } else if (ex.toString().contains("UnknownHostException")) {
@@ -79,12 +75,30 @@ public class DataImport extends Thread {
         }
     }
 
-    private boolean importDetails() throws MalformedURLException, IOException {
+    private void ftpDirectoryExistCheck() throws IOException {
+        FTPClient ftpClient = new FTPClient();
+        ftpClient.connect(options.getFtpAddress());
+        ftpClient.login(options.getFtpLogin(), options.getFtpPass());
+        ftpClient.enterLocalPassiveMode();
+        boolean exist = ftpClient.changeWorkingDirectory(departmentNumber);
+        if (!exist) {
+            ftpClient.makeDirectory(departmentNumber);
+            ftpClient.changeWorkingDirectory(departmentNumber);
+        }
+    }
+
+    private void localDirectoryExistCheck() throws IOException {
+        if (!Files.exists(downloadPath.toPath())) {
+            Files.createDirectory(downloadPath.toPath());
+        }
+    }
+
+    private boolean extractDetails() throws IOException {
         URL ur = new URL("ftp://" + options.getFtpLogin() + ":" + options.getFtpPass() + "@" + options.getFtpAddress()
                 + ":/" + departmentNumber + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
 
-        if (urlConnection.getContentLength() != 0) {
+        if (urlConnection.getContentLength() > 0) {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line;
             detailsList = new LinkedList();
@@ -93,7 +107,7 @@ public class DataImport extends Thread {
             }
             in.close();
             return true;
-        } else {                                 //Файл orders.txt пуст --> Нет новых данных
+        } else {
             return false;
         }
     }
@@ -103,28 +117,33 @@ public class DataImport extends Thread {
                 + ":/" + departmentNumber + "/" + options.getExchangeFileName());
         URLConnection urlConnection = ur.openConnection();
 
-        BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
-        BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(downloadPath));
+        if (urlConnection.getContentLength() > 0) {
+            BufferedInputStream getFileInputStream = new BufferedInputStream(urlConnection.getInputStream());
+            BufferedOutputStream localFileOutputStream = new BufferedOutputStream(new FileOutputStream(downloadPath));
 
-        int line;
-        int i = 0;
-        int progressValue;
-        int oldProgressValue = 0;
-        double onePercent = urlConnection.getContentLength() / 100.0;
+            int line, progressValue;
+            int i = 0, oldProgressValue = 0;
+            double onePercent = urlConnection.getContentLength() / 100.0;
 
-        while ((line = getFileInputStream.read()) != -1) {
-            i++;
-            progressValue = (int) (i / onePercent);
-            localFileOutputStream.write(line);
+            while ((line = getFileInputStream.read()) != -1) {
+                i++;
+                progressValue = (int) (i / onePercent);
+                localFileOutputStream.write(line);
 
-            if ((progressValue != oldProgressValue) && (progressValue != 100)) {
-                Thread.sleep(0);
-                progressBar.setValue(progressValue);
+                if ((progressValue != oldProgressValue) && (progressValue != 100)) {
+                    Thread.sleep(0);
+                    progressBar.setValue(progressValue);
+                }
+                oldProgressValue = progressValue;
             }
-            oldProgressValue = progressValue;
+
+            getFileInputStream.close();
+            localFileOutputStream.close();
+        } else {
+            progressBar.setString("Ошибка");
+            toExchangeBtn.setEnabled(false);
+            JOptionPane.showMessageDialog(null, "Отдел №" + departmentNumber + ". Отсутствует файл обмена (swnd5.arc) на FTP-сервере");
         }
-        getFileInputStream.close();
-        localFileOutputStream.close();
     }
 
     private LinkedList<String> detailsList;
