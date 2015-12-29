@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -100,6 +102,10 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         optionsCallMenuBtn = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
 
@@ -167,6 +173,34 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu3.setText("Архив");
+
+        jMenuItem1.setText("Предыдущий обмен");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem1);
+
+        jMenuItem4.setText("Поиск по всем заказам");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem4);
+
+        jMenuItem6.setText("Последние 25 заказов отдела");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem6);
+
+        jMenuBar1.add(jMenu3);
 
         jMenu2.setText("Справка");
 
@@ -250,6 +284,36 @@ public class MainFrame extends javax.swing.JFrame {
         helpFrame.setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        try {
+            ArchiveLastExchangeFrame previousImportFrame = new ArchiveLastExchangeFrame();
+            previousImportFrame.setVisible(true);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex);                            //для отладки
+        }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        ArchiveSearchFrame archiveSearchFrame = new ArchiveSearchFrame();
+        archiveSearchFrame.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        String param = JOptionPane.showInputDialog(null, "Введите номер отдела:", "Выбор отдела", JOptionPane.PLAIN_MESSAGE);
+        if (param != null) {
+            if (!departmentNameList.contains(param)) {
+                JOptionPane.showMessageDialog(null, "Программа не знает такого отдела!", "Отдел №" + param, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                try {
+                    ArchiveLast_25_Frame archiveLast_25_Frame = new ArchiveLast_25_Frame(param);
+                    archiveLast_25_Frame.setVisible(true);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "У данного отдела пока еще нет архива!", "Отдел №" + param, JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        }
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
     private final DefaultListModel<String> departmentNameList;
     private final int departmentsCount;
     private ActiveDepartment activeDepartment[];
@@ -265,9 +329,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton exitBtn;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JButton mainDownloadBtn;
     private javax.swing.JMenuItem optionsCallMenuBtn;
     // End of variables declaration//GEN-END:variables

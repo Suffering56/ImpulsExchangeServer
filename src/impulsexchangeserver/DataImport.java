@@ -25,7 +25,7 @@ public class DataImport extends Thread {
 
         departmentName = activeDepartment.getDepartmentName();
         downloadPath = new File(System.getProperty("user.dir") + "\\"
-                + departmentName + "\\" + Options.exchangeFileName);     //полный путь к swnd5.arc (включая имя и расширение)
+                + departmentName + "\\" + Options.exchangeFileName);            //полный путь к swnd5.arc (включая имя и расширение)
     }
 
     @Override
@@ -36,14 +36,14 @@ public class DataImport extends Thread {
             toExchangeBtn.setEnabled(false);
             toExchangeBtn.setSelected(false);
 
-            DirectoryHandler.checkFtpDirectory(departmentName);                                           //проверяем наличие папки "номер_отдела" на FTP сервере
+            DirectoryHandler.checkFtpDirectory(departmentName);                 //проверяем наличие папки "номер_отдела" на FTP сервере
             DirectoryHandler.checkLocalDirectory(departmentName);
             
-            boolean isUpdate = extractOrders();                                //загружаем информацию о новых заказах
+            boolean isUpdate = downloadOrders();                                //загружаем информацию о новых заказах
 
             if (isUpdate == true) {                                             //если новые заказы есть:
                 downloadFile();                                                 //загружаем swnd5.arc
-                activeDepartment.setOrdersList(ordersList);                   //прикрепляем список новых заказов к отделу
+                activeDepartment.setOrdersList(ordersList);                     //прикрепляем список новых заказов к отделу
                 toExchangeBtn.setEnabled(true);
                 progressBar.setString("Загружено");
             } else {                                                            //если нет новых заказов:
@@ -73,7 +73,7 @@ public class DataImport extends Thread {
         }
     }
 
-    private boolean extractOrders() throws IOException {
+    private boolean downloadOrders() throws IOException {
         URL ur = new URL("ftp://" + Options.ftpLogin + ":" + Options.ftpPass + "@" + Options.ftpAddress
                 + ":/" + departmentName + "/orders.txt");
         URLConnection urlConnection = ur.openConnection();
