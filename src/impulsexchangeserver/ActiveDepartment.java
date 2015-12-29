@@ -20,6 +20,6 @@ public class ActiveDepartment {
         this.departmentName = departmentName;
     }
 
-    private String departmentName;                                  //Номер отдела
-    private LinkedList <String> ordersList = new LinkedList<>();   //Список заказов
+    private String departmentName;                                //Номер отдела
+    private LinkedList<String> ordersList = new LinkedList<>();   //Список заказов
 }

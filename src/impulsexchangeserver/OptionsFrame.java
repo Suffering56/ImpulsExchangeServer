@@ -355,7 +355,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Был изменен список отделов.\nЧтобы изменения вступили в силу, пожалуйста перезапустите программу.");
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Неизвестная ошибка:\r\nКод: " + ex.toString());
+            JOptionPane.showMessageDialog(null, ex.toString(), "Ошибка записи реестра", JOptionPane.ERROR_MESSAGE);
         }
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed

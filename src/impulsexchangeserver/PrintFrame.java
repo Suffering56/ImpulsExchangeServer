@@ -191,7 +191,7 @@ public class PrintFrame extends JFrame {
             try {
                 this.completeBtnActionPerformed(evt);
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, ex);                        //#Для отладки
+                JOptionPane.showMessageDialog(null, ex.toString(), "Ошибка записи в архив", JOptionPane.ERROR_MESSAGE);
             }
         });
 

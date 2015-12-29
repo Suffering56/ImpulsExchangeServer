@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,7 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void initPanelComponents() {
-        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));         //Устанавливаем компоновку (rows, cols, отступы...)
+        exchangePanel.setLayout(new GridLayout(0, 4, 7, 7));                    //Устанавливаем компоновку (rows, cols, отступы...)
 
         progressBar = new JProgressBar[departmentsCount];
         departmentNameLabel = new JLabel[departmentsCount];
@@ -54,12 +52,12 @@ public class MainFrame extends javax.swing.JFrame {
             exchangePanel.add(toExchangeBtn[i]);
 
             openDirBtn[i] = new JButton("...");
-            openDirBtn[i].setActionCommand(departmentNameList.get(i));             //передаем в качестве параметра номер отдела
+            openDirBtn[i].setActionCommand(departmentNameList.get(i));          //передаем в качестве параметра номер отдела
             openDirBtn[i].addActionListener((evt) -> {
                 try {
                     this.openDirActionPerformed(evt);
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Ошибка: " + ex);       //#Для отладки#
+                    JOptionPane.showMessageDialog(null, ex.toString(), "Невозможно открыть директорию", JOptionPane.ERROR_MESSAGE);
                 }
             });
             openDirBtn[i].setFocusPainted(false);
@@ -80,7 +78,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         } catch (IOException ex) {
             toExchangeBtn[i].setSelected(false);
-            JOptionPane.showMessageDialog(null, ex);                            //#Для отладки#
+            JOptionPane.showMessageDialog(null, ex.toString(), "Ошибка копирования", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -251,7 +249,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void mainDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDownloadBtnActionPerformed
         activeDepartment = new ActiveDepartment[departmentsCount];
-        doPrintList.clear();                                                      //Обнуляем заказы на печать
+        doPrintList.clear();                                                    //Обнуляем заказы на печать
 
         try {
             for (int i = 0; i < departmentsCount; i++) {
@@ -261,7 +259,7 @@ public class MainFrame extends javax.swing.JFrame {
                         toExchangeBtn[i], activeDepartment[i]).start();         //Запуск потоков зарузки данных с FTP
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex);                            //#Для отладки#
+            JOptionPane.showMessageDialog(null, ex.toString(), "Ошибка загрузки данных", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_mainDownloadBtnActionPerformed
 
@@ -289,7 +287,7 @@ public class MainFrame extends javax.swing.JFrame {
             ArchiveLastExchangeFrame previousImportFrame = new ArchiveLastExchangeFrame();
             previousImportFrame.setVisible(true);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex);                            //для отладки
+            JOptionPane.showMessageDialog(null, ex.toString(), "Ошибка чтения архива", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 

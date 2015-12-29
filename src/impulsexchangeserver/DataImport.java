@@ -37,7 +37,7 @@ public class DataImport extends Thread {
             toExchangeBtn.setSelected(false);
 
             DirectoryHandler.checkFtpDirectory(departmentName);                 //проверяем наличие папки "номер_отдела" на FTP сервере
-            DirectoryHandler.checkLocalDirectory(departmentName);
+            DirectoryHandler.checkLocalDirectory(departmentName);               //проверяем наличие папки "номер_отдела" на локальном компьютере
             
             boolean isUpdate = downloadOrders();                                //загружаем информацию о новых заказах
 
@@ -65,7 +65,7 @@ public class DataImport extends Thread {
                 errorMsg = "Другая ошибка.";
             }
 
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());
+            JOptionPane.showMessageDialog(null, errorMsg + "\r\nКод ошибки: " + ex.toString(), "Отдел №" + departmentName, JOptionPane.ERROR_MESSAGE);
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
         } finally {
@@ -122,7 +122,7 @@ public class DataImport extends Thread {
         } else {
             progressBar.setString("Ошибка");
             toExchangeBtn.setEnabled(false);
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". Отсутствует файл обмена (swnd5.arc) на FTP-сервере");
+            JOptionPane.showMessageDialog(null, "Отсутствует файл обмена (swnd5.arc) на FTP-сервере", "Отдел №" + departmentName, JOptionPane.ERROR_MESSAGE);
         }
     }
 

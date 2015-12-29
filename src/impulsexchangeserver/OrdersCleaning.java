@@ -43,7 +43,7 @@ public class OrdersCleaning extends Thread {
             } else {
                 errorMsg = "Другая ошибка.";
             }
-            JOptionPane.showMessageDialog(null, "Отдел №" + departmentName + ". " + errorMsg + "\r\nКод ошибки: " + ex.toString());                              //Вывод уведомления об ошибке на экран
+            JOptionPane.showMessageDialog(null, errorMsg + "\r\nКод ошибки: " + ex.toString(), "Отдел №" + departmentName, JOptionPane.ERROR_MESSAGE);
         }
     }
 
